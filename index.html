@@ -1,0 +1,947 @@
+import { useState, useEffect, useCallback, useRef, createContext, useContext } from "react";
+
+// ─── THEME — CLEAN BLACK & WHITE ─────────────────────────────────────────────
+const THEME = {
+  bg:           "#FFFFFF",
+  surface:      "#F7F7F7",
+  surfaceAlt:   "#EFEFEF",
+  border:       "#E2E2E2",
+  borderLight:  "#C8C8C8",
+  accent:       "#111111",
+  accentBold:   "#000000",
+  gold:         "#111111",
+  goldDim:      "#333333",
+  text:         "#111111",
+  textMuted:    "#555555",
+  textDim:      "#999999",
+  error:        "#D32F2F",
+  success:      "#1B7C3A",
+  warning:      "#B45309",
+  gradientCard:    "linear-gradient(145deg, #FFFFFF 0%, #F4F4F4 100%)",
+  gradientHero:    "linear-gradient(135deg, #F9F9F9 0%, #EFEFEF 50%, #E8E8E8 100%)",
+  gradientAccent:  "linear-gradient(135deg, #111111 0%, #333333 100%)",
+  gradientGold:    "linear-gradient(135deg, #111111 0%, #444444 100%)",
+  gradientGreen:   "linear-gradient(135deg, #1B7C3A 0%, #145C2B 100%)",
+};
+
+const CATEGORIES = ["All","Shoes","T-Shirts","Polo T-Shirts","Hoodies","Jeans","Sneakers","Casual Shoes","Formal Shoes","Slides & Slippers","Accessories","Watches","Smart Watches","Headphones","Earbuds","Earphones","Charger","Charging Cable"];
+const SIZES  = ["XS","S","M","L","XL","XXL"];
+const COLORS = ["Black","White","Navy","Grey","Olive","Beige","Red","Blue","Green","Brown"];
+
+const MOCK_PRODUCTS = [
+  { id:"1",  name:"Obsidian Oversized Tee",     price:1299, discountPrice:999,  category:"T-Shirts",         description:"Premium 300gsm cotton oversized tee with dropped shoulders. Washed black finish.",       sizes:["S","M","L","XL","XXL"],    colors:["Black","White","Grey"],  stock:48, sku:"VYX-TSH-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:124, emoji:"👕" },
+  { id:"2",  name:"Phantom Polo",               price:1799, discountPrice:1499, category:"Polo T-Shirts",    description:"Luxury piqué cotton polo with embroidered VYROX crest. Slim fit.",                      sizes:["S","M","L","XL"],          colors:["Navy","White","Black"],  stock:32, sku:"VYX-POL-001", bestseller:true,  featured:false, rating:4.6, reviewsCount:89,  emoji:"🎽" },
+  { id:"3",  name:"Arctic Fleece Hoodie",       price:2999, discountPrice:2499, category:"Hoodies",          description:"500gsm fleece lined hoodie with kangaroo pocket. Brushed interior.",                    sizes:["S","M","L","XL","XXL"],    colors:["Grey","Black","White"],  stock:25, sku:"VYX-HOD-001", bestseller:true,  featured:true,  rating:4.9, reviewsCount:203, emoji:"🧥" },
+  { id:"4",  name:"Raw Edge Selvedge Jeans",    price:3499, discountPrice:2999, category:"Jeans",            description:"14oz Japanese selvedge denim. Slim straight cut with raw hem.",                         sizes:["28","30","32","34","36"],   colors:["Blue","Black"],          stock:22, sku:"VYX-JNS-001", bestseller:true,  featured:false, rating:4.8, reviewsCount:156, emoji:"👖" },
+  { id:"5",  name:"VX Runner Pro",              price:5999, discountPrice:4999, category:"Sneakers",         description:"EVA foam midsole with mesh upper. Responsive cushioning for all-day wear.",             sizes:["7","8","9","10","11","12"], colors:["White","Black","Grey"],  stock:18, sku:"VYX-SNK-001", bestseller:true,  featured:true,  rating:4.9, reviewsCount:312, emoji:"👟" },
+  { id:"6",  name:"Desert Suede Loafers",       price:3999, discountPrice:null, category:"Casual Shoes",     description:"Premium suede loafers with crepe rubber sole. Handcrafted in Portugal.",                sizes:["7","8","9","10","11"],     colors:["Brown","Beige","Black"], stock:12, sku:"VYX-CAS-001", bestseller:false, featured:true,  rating:4.6, reviewsCount:54,  emoji:"🥾" },
+  { id:"7",  name:"Oxford Derby Shoes",         price:6499, discountPrice:5499, category:"Formal Shoes",     description:"Full-grain leather Derby shoes with leather sole. Goodyear welted.",                    sizes:["7","8","9","10","11","12"], colors:["Black","Brown"],         stock:9,  sku:"VYX-FRM-001", bestseller:false, featured:false, rating:4.8, reviewsCount:38,  emoji:"👞" },
+  { id:"8",  name:"Cloud Slides",               price:899,  discountPrice:699,  category:"Slides & Slippers",description:"Ultra-cushioned EVA slides with contoured footbed.",                                   sizes:["7","8","9","10","11"],     colors:["Black","White","Grey"],  stock:67, sku:"VYX-SLD-001", bestseller:true,  featured:false, rating:4.5, reviewsCount:189, emoji:"🩴" },
+  { id:"9",  name:"Sport Shoes VX-Air",         price:4499, discountPrice:3799, category:"Shoes",            description:"Lightweight sport shoes with breathable knit upper and rubber outsole.",                sizes:["7","8","9","10","11","12"], colors:["Black","White","Grey"],  stock:30, sku:"VYX-SHO-001", bestseller:false, featured:true,  rating:4.7, reviewsCount:76,  emoji:"👠" },
+  { id:"10", name:"Minimalist Card Wallet",     price:1299, discountPrice:999,  category:"Accessories",      description:"Slim aluminum card holder with RFID blocking. Holds 8 cards.",                          sizes:["One Size"],                colors:["Black","Grey"],          stock:76, sku:"VYX-ACC-001", bestseller:true,  featured:false, rating:4.6, reviewsCount:241, emoji:"💳" },
+  { id:"11", name:"Chrono Field Watch",         price:8999, discountPrice:7499, category:"Watches",          description:"Japanese Miyota movement, sapphire crystal, 200m water resistance.",                   sizes:["One Size"],                colors:["Black","Brown"],         stock:7,  sku:"VYX-WTC-001", bestseller:false, featured:true,  rating:4.9, reviewsCount:29,  emoji:"⌚" },
+  { id:"12", name:"VX Smart Watch Pro",         price:6999, discountPrice:5999, category:"Smart Watches",    description:"1.8\" AMOLED display, health tracking, 7-day battery, IP68 waterproof.",               sizes:["One Size"],                colors:["Black","Silver","White"],stock:15, sku:"VYX-SWT-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:143, emoji:"⌚" },
+  { id:"13", name:"VX Studio Headphones",       price:4999, discountPrice:3999, category:"Headphones",       description:"40mm drivers, active noise cancellation, 30hr battery, foldable design.",              sizes:["One Size"],                colors:["Black","White"],         stock:20, sku:"VYX-HDP-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:198, emoji:"🎧" },
+  { id:"14", name:"VX Buds Pro",                price:3499, discountPrice:2799, category:"Earbuds",          description:"TWS earbuds with ANC, 8hr playback + 24hr case, IPX5 water resistant.",               sizes:["One Size"],                colors:["Black","White"],         stock:35, sku:"VYX-EBD-001", bestseller:true,  featured:false, rating:4.7, reviewsCount:267, emoji:"🎵" },
+  { id:"15", name:"VX Wired Earphones",         price:799,  discountPrice:599,  category:"Earphones",        description:"10mm dynamic driver earphones with mic, tangle-free cable, 3.5mm jack.",               sizes:["One Size"],                colors:["Black","White"],         stock:90, sku:"VYX-EPH-001", bestseller:false, featured:false, rating:4.3, reviewsCount:312, emoji:"🎶" },
+  { id:"16", name:"VX 65W GaN Charger",         price:1999, discountPrice:1599, category:"Charger",          description:"65W GaN USB-C PD charger, supports PPS fast charging, universal compatibility.",       sizes:["One Size"],                colors:["Black","White"],         stock:50, sku:"VYX-CHR-001", bestseller:false, featured:true,  rating:4.5, reviewsCount:88,  emoji:"🔌" },
+  { id:"17", name:"VX 240W Braided USB-C Cable",price:699,  discountPrice:499,  category:"Charging Cable",   description:"240W USB-C to USB-C braided cable, 1m & 2m options, supports 48V/5A fast charge.",      sizes:["One Size"],                colors:["Black","White"],         stock:120, sku:"VYX-CBL-001", bestseller:false, featured:false, rating:4.4, reviewsCount:154, emoji:"🔋" },
+  { id:"18", name:"Bone Conduction Earbuds",    price:3999, discountPrice:2999, category:"Earbuds",          description:"Open-ear bone conduction. 8hr battery, IP55 water resistant.",                         sizes:["One Size"],                colors:["Black","Grey"],          stock:21, sku:"VYX-TCH-001", bestseller:false, featured:true,  rating:4.7, reviewsCount:198, emoji:"🎧" },
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const StoreContext = createContext(null);
+function useLocalStorage(key, initial) {
+  const [val, setVal] = useState(() => { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : initial; } catch { return initial; } });
+  const set = useCallback((v) => { setVal(v); try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }, [key]);
+  return [val, set];
+}
+function StoreProvider({ children }) {
+  const [cart, setCart]         = useLocalStorage("vyrox_cart", []);
+  const [wishlist, setWishlist] = useLocalStorage("vyrox_wishlist", []);
+  const [orders, setOrders]     = useLocalStorage("vyrox_orders", []);
+  const [products, setProducts] = useState(MOCK_PRODUCTS);
+  const [adminAuth, setAdminAuth] = useState(() => { try { return !!localStorage.getItem("vyrox_admin"); } catch { return false; } });
+  const addToCart = (product, size, color, qty=1) => setCart(prev => { const key=`${product.id}_${size}_${color}`; const ex=prev.find(i=>`${i.id}_${i.size}_${i.color}`===key); if(ex) return prev.map(i=>`${i.id}_${i.size}_${i.color}`===key?{...i,qty:i.qty+qty}:i); return [...prev,{...product,size,color,qty}]; });
+  const removeFromCart = (id,size,color) => setCart(prev=>prev.filter(i=>!(i.id===id&&i.size===size&&i.color===color)));
+  const updateQty = (id,size,color,qty) => { if(qty<1) return removeFromCart(id,size,color); setCart(prev=>prev.map(i=>i.id===id&&i.size===size&&i.color===color?{...i,qty}:i)); };
+  const clearCart = () => setCart([]);
+  const toggleWishlist = (id) => setWishlist(prev=>prev.includes(id)?prev.filter(w=>w!==id):[...prev,id]);
+  const cartTotal = cart.reduce((s,i)=>s+(i.discountPrice||i.price)*i.qty,0);
+  const cartCount = cart.reduce((s,i)=>s+i.qty,0);
+  const adminLogin = (user,pass) => { if(user==="vyrox"&&pass==="#vyrox2026"){localStorage.setItem("vyrox_admin","1");setAdminAuth(true);return true;}return false; };
+  const adminLogout = () => { localStorage.removeItem("vyrox_admin");setAdminAuth(false); };
+  const addProduct = (p) => setProducts(prev=>[{...p,id:Date.now().toString(),rating:0,reviewsCount:0,createdAt:new Date().toISOString()},...prev]);
+  const editProduct = (id,data) => setProducts(prev=>prev.map(p=>p.id===id?{...p,...data}:p));
+  const deleteProduct = (id) => setProducts(prev=>prev.filter(p=>p.id!==id));
+  const placeOrder = (details) => { const orderId=`VYX-${Math.floor(1000+Math.random()*9000)}`; const order={orderId,products:cart,total:cartTotal,customer:details,status:"Pending",createdAt:new Date().toISOString()}; setOrders(prev=>[order,...prev]); clearCart(); return order; };
+  const updateOrderStatus = (orderId,status) => setOrders(prev=>prev.map(o=>o.orderId===orderId?{...o,status}:o));
+  return <StoreContext.Provider value={{cart,wishlist,orders,products,adminAuth,cartTotal,cartCount,addToCart,removeFromCart,updateQty,clearCart,toggleWishlist,adminLogin,adminLogout,addProduct,editProduct,deleteProduct,placeOrder,updateOrderStatus}}>{children}</StoreContext.Provider>;
+}
+const useStore = () => useContext(StoreContext);
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+const fmt = (n) => `₹${n.toLocaleString("en-IN")}`;
+const Stars = ({ rating }) => (
+  <span style={{fontSize:"0.76rem",letterSpacing:"1px"}}>
+    <span style={{color:THEME.gold}}>{"★".repeat(Math.floor(rating))}</span>
+    <span style={{color:THEME.textDim}}>{"☆".repeat(5-Math.floor(rating))}</span>
+    <span style={{color:THEME.textMuted,marginLeft:5,fontSize:"0.7rem"}}>{rating}</span>
+  </span>
+);
+
+// ─── GLOBAL STYLES OBJECT ─────────────────────────────────────────────────────
+const gs = {
+  page:       { background:THEME.bg, minHeight:"100vh", fontFamily:"'DM Sans',sans-serif", color:THEME.text },
+  btn:        { background:THEME.gradientAccent, color:"#fff", border:"none", borderRadius:"6px", padding:"11px 22px", fontWeight:700, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", fontSize:"0.82rem", letterSpacing:"0.08em", textTransform:"uppercase", transition:"all 0.2s", boxShadow:`0 2px 12px rgba(0,0,0,0.12)` },
+  btnGold:    { background:THEME.gradientGold, color:"#FFFFFF", border:"none", borderRadius:"6px", padding:"11px 22px", fontWeight:800, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", fontSize:"0.82rem", letterSpacing:"0.08em", textTransform:"uppercase", transition:"all 0.2s", boxShadow:`0 2px 12px rgba(0,0,0,0.12)` },
+  btnOutline: { background:"transparent", color:THEME.accent, border:`1.5px solid ${THEME.accent}`, borderRadius:"6px", padding:"10px 20px", fontWeight:700, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", fontSize:"0.82rem", letterSpacing:"0.08em", textTransform:"uppercase", transition:"all 0.2s" },
+  btnGhost:   { background:"transparent", color:THEME.textMuted, border:`1px solid ${THEME.border}`, borderRadius:"6px", padding:"8px 16px", cursor:"pointer", fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem", transition:"all 0.2s" },
+  input:      { background:THEME.surfaceAlt, border:`1px solid ${THEME.border}`, color:THEME.text, padding:"11px 14px", fontFamily:"'DM Sans',sans-serif", fontSize:"0.88rem", outline:"none", borderRadius:"6px", width:"100%", boxSizing:"border-box" },
+  card:       { background:THEME.gradientCard, border:`1px solid ${THEME.border}`, borderRadius:"10px" },
+  tag:        { background:"rgba(0,0,0,0.07)", color:THEME.accent, padding:"3px 12px", fontSize:"0.67rem", letterSpacing:"0.1em", textTransform:"uppercase", border:`1px solid rgba(0,0,0,0.27)`, display:"inline-block", borderRadius:"100px" },
+  tagGold:    { background:"rgba(0,0,0,0.06)", color:THEME.gold, padding:"3px 12px", fontSize:"0.67rem", letterSpacing:"0.1em", textTransform:"uppercase", border:`1px solid rgba(0,0,0,0.27)`, display:"inline-block", borderRadius:"100px" },
+  glow:       { boxShadow:`0 4px 24px rgba(0,0,0,0.1)` },
+  glowGold:   { boxShadow:`0 0 32px rgba(0,0,0,0.13), 0 6px 24px rgba(0,0,0,0.4)` },
+};
+
+// ─── NAVBAR ───────────────────────────────────────────────────────────────────
+function Navbar({ page, setPage }) {
+  const { cartCount, wishlist } = useStore();
+  return (
+    <nav style={{ background:`rgba(247,247,247,0.93)`, backdropFilter:"blur(20px)", borderBottom:`1px solid ${THEME.border}`, position:"sticky", top:0, zIndex:100 }}>
+      <div style={{ maxWidth:1400, margin:"0 auto", padding:"0 28px", display:"flex", alignItems:"center", justifyContent:"space-between", height:66 }}>
+        <button onClick={()=>setPage("home")} style={{ background:"none", border:"none", cursor:"pointer" }}>
+          <span style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.1rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.14em" }}>VYROX</span>
+        </button>
+        <div style={{ display:"flex", gap:2 }}>
+          {["home","shop","about"].map(p => (
+            <button key={p} onClick={()=>setPage(p)} style={{ background:page===p?"rgba(0,0,0,0.05)":"none", color:page===p?THEME.accent:THEME.textMuted, border:"none", borderBottom:page===p?`2px solid ${THEME.accent}`:"2px solid transparent", cursor:"pointer", padding:"8px 18px", fontSize:"0.82rem", textTransform:"uppercase", letterSpacing:"0.1em", fontWeight:page===p?700:400, transition:"all 0.2s" }}>
+              {p}
+            </button>
+          ))}
+        </div>
+        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+          <button onClick={()=>setPage("wishlist")} style={{ background:"none", border:"none", cursor:"pointer", color:wishlist.length?THEME.error:THEME.textMuted, fontSize:"1.3rem", padding:"6px", position:"relative", transition:"all 0.2s" }}>
+            {wishlist.length?"♥":"♡"}
+            {wishlist.length>0 && <span style={{ position:"absolute", top:0, right:0, background:THEME.error, color:"#fff", fontSize:"0.55rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>{wishlist.length}</span>}
+          </button>
+          <button onClick={()=>setPage("cart")} style={{ ...gs.btnOutline, padding:"8px 16px", display:"flex", alignItems:"center", gap:7, fontSize:"0.78rem" }}>
+            🛒 Cart
+            {cartCount>0 && <span style={{ background:THEME.gradientAccent, color:"#fff", borderRadius:"100px", width:20, height:20, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.62rem", fontWeight:700 }}>{cartCount}</span>}
+          </button>
+          <button onClick={()=>setPage("admin")} style={{ ...gs.btnGhost, padding:"8px 14px", fontSize:"0.72rem", color:THEME.gold, borderColor:`rgba(0,0,0,0.33)` }}>⚙ Admin</button>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ─── HOME ─────────────────────────────────────────────────────────────────────
+function HomePage({ setPage }) {
+  const { products } = useStore();
+  const featured    = products.filter(p=>p.featured).slice(0,4);
+  const bestsellers = products.filter(p=>p.bestseller).slice(0,4);
+  const catIcons    = {"Shoes":"👠","T-Shirts":"👕","Polo T-Shirts":"🎽","Hoodies":"🧥","Jeans":"👖","Sneakers":"👟","Casual Shoes":"🥾","Formal Shoes":"👞","Slides & Slippers":"🩴","Accessories":"💳","Watches":"⌚","Smart Watches":"⌚","Headphones":"🎧","Earbuds":"🎵","Earphones":"🎶","Charger":"🔌","Charging Cable":"🔋"};
+  return (
+    <div>
+      {/* HERO */}
+      <div style={{ background:THEME.gradientHero, minHeight:580, display:"flex", alignItems:"center", padding:"0 28px", position:"relative", overflow:"hidden", borderBottom:`1px solid ${THEME.border}` }}>
+        <div style={{ position:"absolute", top:-120, right:-60, width:520, height:520, background:`radial-gradient(circle, rgba(0,0,0,0.05) 0%, transparent 65%)`, pointerEvents:"none" }} />
+        <div style={{ position:"absolute", bottom:-80, left:160, width:360, height:360, background:`radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 65%)`, pointerEvents:"none" }} />
+        <div style={{ position:"absolute", top:80, right:"28%", width:180, height:180, background:`radial-gradient(circle, rgba(0,0,0,0.04) 0%, transparent 70%)`, pointerEvents:"none" }} />
+        <div style={{ maxWidth:1400, margin:"0 auto", width:"100%", position:"relative" }}>
+          <div style={{ maxWidth:640 }}>
+            <div style={{ display:"flex", gap:10, marginBottom:22 }}>
+              <span style={gs.tag}>New Season 2026</span>
+              <span style={gs.tagGold}>✦ Limited Drop</span>
+            </div>
+            <h1 style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"clamp(3.5rem,9vw,8.5rem)", lineHeight:0.88, margin:"0 0 24px", letterSpacing:"0.03em" }}>
+              DRESS<br />
+              <span style={{ background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>DIFFERENT.</span>
+              <br />LIVE LOUD.
+            </h1>
+            <p style={{ color:THEME.textMuted, fontSize:"1.05rem", marginBottom:36, lineHeight:1.78, maxWidth:450 }}>
+              Premium fashion & lifestyle for those who refuse to blend in. Crafted with intent, worn with attitude.
+            </p>
+            <div style={{ display:"flex", gap:14, flexWrap:"wrap" }}>
+              <button style={gs.btnGold} onClick={()=>setPage("shop")}>✦ SHOP NOW →</button>
+              <button style={gs.btnGhost} onClick={()=>setPage("shop")}>View Lookbook</button>
+            </div>
+            <div style={{ display:"flex", gap:22, marginTop:36, flexWrap:"wrap" }}>
+              {["Free Shipping ₹2999+","7-Day Returns","Premium Quality"].map(t=>(
+                <div key={t} style={{ display:"flex", alignItems:"center", gap:6, fontSize:"0.75rem", color:THEME.textMuted }}>
+                  <span style={{ color:THEME.success, fontWeight:700 }}>✓</span> {t}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ position:"absolute", right:32, top:"50%", transform:"translateY(-50%)", opacity:0.07, fontFamily:"'Bebas Neue',sans-serif", fontSize:"0.9rem", letterSpacing:"0.25em", writingMode:"vertical-rl" }}>
+          PREMIUM • LIFESTYLE • FASHION • VYROX • 2026 •
+        </div>
+      </div>
+
+      {/* STATS */}
+      <div style={{ background:`linear-gradient(90deg,#111111 0%,#222222 50%,#111111 100%)`, borderBottom:`1px solid ${THEME.border}`, padding:"20px 28px" }}>
+        <div style={{ maxWidth:1400, margin:"0 auto", display:"flex", justifyContent:"center", gap:0, flexWrap:"wrap" }}>
+          {[["18+","Categories","📦"],["500+","Products","✨"],["10K+","Happy Customers","💜"],["Free Shipping","on orders ₹2999+","🚀"]].map(([n,l,ic],i,arr)=>(
+            <div key={n} style={{ textAlign:"center", padding:"0 36px", borderRight:i<arr.length-1?`1px solid ${THEME.border}`:"none" }}>
+              <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.4rem", background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.06em" }}>{ic} {n}</div>
+              <div style={{ fontSize:"0.68rem", color:THEME.textMuted, textTransform:"uppercase", letterSpacing:"0.1em", marginTop:3 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ maxWidth:1400, margin:"0 auto", padding:"68px 28px" }}>
+        <SectionHeader title="Featured Drops" subtitle="Handpicked for the season" onSeeAll={()=>setPage("shop")} />
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))", gap:20 }}>
+          {featured.map(p=><ProductCard key={p.id} product={p} setPage={setPage} />)}
+        </div>
+
+        <div style={{ marginTop:76 }}>
+          <SectionHeader title="Bestsellers" subtitle="What everyone's wearing" onSeeAll={()=>setPage("shop")} />
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))", gap:20 }}>
+            {bestsellers.map(p=><ProductCard key={p.id} product={p} setPage={setPage} />)}
+          </div>
+        </div>
+
+        <div style={{ marginTop:76 }}>
+          <SectionHeader title="Shop by Category" subtitle="Explore our full range" />
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(152px,1fr))", gap:12 }}>
+            {CATEGORIES.filter(c=>c!=="All").slice(0,12).map(cat=>(
+              <button key={cat} onClick={()=>setPage("shop")}
+                style={{ ...gs.card, padding:"22px 12px", cursor:"pointer", textAlign:"center", transition:"all 0.25s", borderColor:THEME.border }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=THEME.accent;e.currentTarget.style.boxShadow=`0 4px 16px rgba(0,0,0,0.12)`;e.currentTarget.style.transform="translateY(-3px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=THEME.border;e.currentTarget.style.boxShadow="none";e.currentTarget.style.transform="none";}}>
+                <div style={{ fontSize:"1.9rem", marginBottom:9 }}>{catIcons[cat]||"🏷️"}</div>
+                <div style={{ fontSize:"0.67rem", textTransform:"uppercase", letterSpacing:"0.08em", color:THEME.textMuted }}>{cat}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Promo Banner */}
+        <div style={{ marginTop:76, background:`linear-gradient(135deg,#111111 0%,#222222 40%,#111111 100%)`, border:`1px solid ${THEME.borderLight}`, borderRadius:14, padding:"50px 44px", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:24, position:"relative", overflow:"hidden", ...gs.glow }}>
+          <div style={{ position:"absolute", right:-40, top:-40, width:300, height:300, background:`radial-gradient(circle,rgba(0,0,0,0.09) 0%,transparent 65%)`, pointerEvents:"none" }} />
+          <div>
+            <div style={{ ...gs.tagGold, marginBottom:16 }}>✦ Exclusive Offer</div>
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.6rem", letterSpacing:"0.05em", lineHeight:1 }}>FREE SHIPPING ON</div>
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.6rem", background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.05em" }}>ORDERS ABOVE ₹2,999</div>
+          </div>
+          <button style={{ ...gs.btnGold, padding:"14px 36px", fontSize:"0.9rem" }} onClick={()=>setPage("shop")}>SHOP NOW →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SectionHeader({ title, subtitle, onSeeAll }) {
+  return (
+    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:28 }}>
+      <div>
+        <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.1rem", letterSpacing:"0.06em", lineHeight:1 }}>{title.toUpperCase()}</div>
+        {subtitle && <div style={{ color:THEME.textMuted, fontSize:"0.82rem", marginTop:5 }}>{subtitle}</div>}
+      </div>
+      {onSeeAll && <button onClick={onSeeAll} style={{ ...gs.btnGhost, color:THEME.accent, borderColor:"rgba(0,0,0,0.2)", fontSize:"0.75rem" }}>See All →</button>}
+    </div>
+  );
+}
+
+// ─── PRODUCT CARD ─────────────────────────────────────────────────────────────
+function ProductCard({ product:p, setPage }) {
+  const { toggleWishlist, wishlist, addToCart } = useStore();
+  const [hovered, setHovered] = useState(false);
+  const inWishlist = wishlist.includes(p.id);
+  const discount   = p.discountPrice ? Math.round((1-p.discountPrice/p.price)*100) : 0;
+  return (
+    <div style={{ ...gs.card, cursor:"pointer", position:"relative", transition:"all 0.25s", transform:hovered?"translateY(-5px)":"none", boxShadow:hovered?"0 8px 32px rgba(0,0,0,0.12)":"none", borderColor:hovered?THEME.borderLight:THEME.border }}
+      onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}>
+      <div style={{ background:`linear-gradient(145deg,#F0F0F0 0%,#E4E4E4 100%)`, height:232, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"5.5rem", position:"relative", borderRadius:"10px 10px 0 0", overflow:"hidden" }}
+        onClick={()=>setPage({name:"product",id:p.id})}>
+        <div style={{ position:"absolute", inset:0, background:`radial-gradient(circle at 70% 30%,rgba(0,0,0,0.04) 0%,transparent 60%)` }} />
+        <span style={{ position:"relative", zIndex:1, filter:`drop-shadow(0 4px 12px rgba(0,0,0,0.15))` }}>{p.emoji}</span>
+        {p.bestseller && <span style={{ position:"absolute", top:10, left:10, ...gs.tagGold, fontSize:"0.58rem" }}>⭐ Bestseller</span>}
+        {discount>0 && <span style={{ position:"absolute", top:10, right:40, background:THEME.error, color:"#fff", fontSize:"0.6rem", padding:"3px 9px", fontWeight:700, borderRadius:"4px" }}>-{discount}%</span>}
+        <button onClick={e=>{e.stopPropagation();toggleWishlist(p.id);}}
+          style={{ position:"absolute", top:8, right:8, background:"rgba(255,255,255,0.85)", border:`1px solid ${inWishlist?THEME.error:THEME.border}`, cursor:"pointer", color:inWishlist?THEME.error:THEME.textDim, fontSize:"1.1rem", width:33, height:33, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%", backdropFilter:"blur(8px)", transition:"all 0.2s" }}>
+          {inWishlist?"♥":"♡"}
+        </button>
+      </div>
+      <div style={{ padding:"14px 16px 0" }} onClick={()=>setPage({name:"product",id:p.id})}>
+        <div style={{ fontSize:"0.64rem", color:THEME.accent, textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:5 }}>{p.category}</div>
+        <div style={{ fontWeight:600, fontSize:"0.93rem", marginBottom:6, lineHeight:1.3 }}>{p.name}</div>
+        <Stars rating={p.rating} />
+        <div style={{ fontSize:"0.62rem", color:THEME.textDim, marginBottom:10 }}>({p.reviewsCount} reviews)</div>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <span style={{ fontWeight:800, fontSize:"1.05rem", background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{fmt(p.discountPrice||p.price)}</span>
+          {p.discountPrice && <span style={{ color:THEME.textDim, fontSize:"0.78rem", textDecoration:"line-through" }}>{fmt(p.price)}</span>}
+        </div>
+      </div>
+      <div style={{ padding:"12px 16px 16px" }}>
+        <button style={{ ...gs.btn, width:"100%", padding:"10px", fontSize:"0.78rem" }} onClick={e=>{e.stopPropagation();addToCart(p,p.sizes[0],p.colors[0]);}}>
+          + ADD TO CART
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── SHOP ─────────────────────────────────────────────────────────────────────
+function ShopPage({ setPage }) {
+  const { products } = useStore();
+  const [search, setSearch]       = useState("");
+  const [debSearch, setDebSearch] = useState("");
+  const [category, setCategory]   = useState("All");
+  const [sortBy, setSortBy]       = useState("newest");
+  const [priceMax, setPriceMax]   = useState(10000);
+  const [filterSize, setFSize]    = useState("");
+  const [filterColor, setFColor]  = useState("");
+  const [inStock, setInStock]     = useState(false);
+  const [showF, setShowF]         = useState(true);
+  const debRef = useRef(null);
+  const handleSearch = v => { setSearch(v); clearTimeout(debRef.current); debRef.current=setTimeout(()=>setDebSearch(v),350); };
+  const clearAll = () => { setCategory("All");setSortBy("newest");setPriceMax(10000);setFSize("");setFColor("");setInStock(false);setSearch("");setDebSearch(""); };
+  const filtered = products
+    .filter(p => {
+      if(category!=="All"&&p.category!==category) return false;
+      if(inStock&&p.stock===0) return false;
+      if(filterSize&&!p.sizes.includes(filterSize)) return false;
+      if(filterColor&&!p.colors.includes(filterColor)) return false;
+      if((p.discountPrice||p.price)>priceMax) return false;
+      if(debSearch){const q=debSearch.toLowerCase();return p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)||p.description.toLowerCase().includes(q);}
+      return true;
+    })
+    .sort((a,b)=>{
+      if(sortBy==="price_asc")  return (a.discountPrice||a.price)-(b.discountPrice||b.price);
+      if(sortBy==="price_desc") return (b.discountPrice||b.price)-(a.discountPrice||a.price);
+      if(sortBy==="name")       return a.name.localeCompare(b.name);
+      if(sortBy==="rating")     return b.rating-a.rating;
+      return 0;
+    });
+  return (
+    <div style={{ maxWidth:1400, margin:"0 auto", padding:"36px 28px", display:"flex", gap:28 }}>
+      {showF && (
+        <div style={{ width:252, flexShrink:0 }}>
+          <div style={{ ...gs.card, ...gs.glow, padding:22, position:"sticky", top:82 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
+              <span style={{ fontFamily:"'Bebas Neue',sans-serif", letterSpacing:"0.12em", fontSize:"1.1rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>FILTERS</span>
+              <button onClick={clearAll} style={{ background:"none", border:"none", color:THEME.gold, cursor:"pointer", fontSize:"0.72rem", textTransform:"uppercase", letterSpacing:"0.06em" }}>Clear All</button>
+            </div>
+            <FSection label="Category">
+              <div style={{ display:"flex", flexDirection:"column", gap:3, maxHeight:232, overflowY:"auto" }}>
+                {CATEGORIES.map(c=>(
+                  <button key={c} onClick={()=>setCategory(c)} style={{ background:category===c?"#111111":"none", color:category===c?THEME.accent:THEME.textMuted, border:category===c?`1px solid rgba(0,0,0,0.27)`:"1px solid transparent", cursor:"pointer", textAlign:"left", padding:"6px 10px", fontSize:"0.78rem", fontWeight:category===c?700:400, borderRadius:5, transition:"all 0.15s" }}>{c}</button>
+                ))}
+              </div>
+            </FSection>
+            <FSection label="Price Range">
+              <div style={{ fontSize:"0.78rem", color:THEME.gold, marginBottom:8, fontWeight:700 }}>Up to {fmt(priceMax)}</div>
+              <input type="range" min={500} max={10000} step={100} value={priceMax} onChange={e=>setPriceMax(+e.target.value)} style={{ width:"100%", accentColor:THEME.accentBold }} />
+            </FSection>
+            <FSection label="Size">
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                {SIZES.map(s=><button key={s} onClick={()=>setFSize(filterSize===s?"":s)} style={{ ...gs.btnGhost, padding:"5px 11px", fontSize:"0.72rem", borderColor:filterSize===s?THEME.accent:THEME.border, color:filterSize===s?THEME.accent:THEME.textMuted, background:filterSize===s?"rgba(0,0,0,0.05)":"transparent" }}>{s}</button>)}
+              </div>
+            </FSection>
+            <FSection label="Color">
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                {COLORS.slice(0,6).map(c=><button key={c} onClick={()=>setFColor(filterColor===c?"":c)} style={{ ...gs.btnGhost, padding:"5px 11px", fontSize:"0.72rem", borderColor:filterColor===c?THEME.accent:THEME.border, color:filterColor===c?THEME.accent:THEME.textMuted, background:filterColor===c?"rgba(0,0,0,0.05)":"transparent" }}>{c}</button>)}
+              </div>
+            </FSection>
+            <FSection label="Availability">
+              <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:"0.78rem", color:THEME.textMuted }}>
+                <input type="checkbox" checked={inStock} onChange={e=>setInStock(e.target.checked)} style={{ accentColor:THEME.accentBold }} /> In Stock Only
+              </label>
+            </FSection>
+          </div>
+        </div>
+      )}
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ display:"flex", gap:12, marginBottom:24, flexWrap:"wrap" }}>
+          <input value={search} onChange={e=>handleSearch(e.target.value)} placeholder="🔍  Search products..." style={{ ...gs.input, flex:1, minWidth:200 }} />
+          <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{ ...gs.input, width:195 }}>
+            <option value="newest">Newest First</option>
+            <option value="price_asc">Price: Low → High</option>
+            <option value="price_desc">Price: High → Low</option>
+            <option value="name">Name A–Z</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+          <button onClick={()=>setShowF(!showF)} style={gs.btnGhost}>{showF?"Hide":"Show"} Filters</button>
+        </div>
+        <div style={{ fontSize:"0.78rem", color:THEME.textMuted, marginBottom:20 }}>
+          Showing <strong style={{ color:THEME.accent }}>{filtered.length}</strong> products {category!=="All"&&`in ${category}`}
+        </div>
+        {filtered.length===0 ? (
+          <div style={{ textAlign:"center", padding:"80px 20px" }}>
+            <div style={{ fontSize:"3rem", marginBottom:16 }}>🔍</div>
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.6rem", color:THEME.textMuted, marginBottom:16 }}>No Products Found</div>
+            <button onClick={clearAll} style={gs.btn}>Clear Filters</button>
+          </div>
+        ) : (
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(228px,1fr))", gap:20 }}>
+            {filtered.map(p=><ProductCard key={p.id} product={p} setPage={setPage} />)}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+function FSection({ label, children }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{ borderTop:`1px solid ${THEME.border}`, paddingTop:14, marginBottom:16 }}>
+      <button onClick={()=>setOpen(!open)} style={{ background:"none", border:"none", cursor:"pointer", display:"flex", justifyContent:"space-between", width:"100%", color:THEME.text, fontSize:"0.74rem", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:open?10:0, fontWeight:700, padding:0 }}>
+        {label} <span style={{ color:THEME.accent }}>{open?"−":"+"}</span>
+      </button>
+      {open && children}
+    </div>
+  );
+}
+
+// ─── PRODUCT DETAIL ───────────────────────────────────────────────────────────
+function ProductDetail({ productId, setPage }) {
+  const { products, addToCart, toggleWishlist, wishlist } = useStore();
+  const p = products.find(x=>x.id===productId);
+  const [selSize,setSelSize]   = useState("");
+  const [selColor,setSelColor] = useState("");
+  const [qty,setQty]           = useState(1);
+  const [added,setAdded]       = useState(false);
+  if(!p) return <div style={{ padding:40, textAlign:"center", color:THEME.textMuted }}>Product not found.</div>;
+  const inWishlist = wishlist.includes(p.id);
+  const price    = p.discountPrice||p.price;
+  const discount = p.discountPrice?Math.round((1-p.discountPrice/p.price)*100):0;
+  const handleAdd = () => { if(!selSize||!selColor) return alert("Please select size and color"); addToCart(p,selSize,selColor,qty); setAdded(true); setTimeout(()=>setAdded(false),2000); };
+  return (
+    <div style={{ maxWidth:1100, margin:"0 auto", padding:"44px 28px" }}>
+      <button onClick={()=>setPage("shop")} style={{ ...gs.btnGhost, marginBottom:28, fontSize:"0.75rem" }}>← Back to Shop</button>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:52 }}>
+        <div style={{ background:`linear-gradient(145deg,#F0F0F0 0%,#E8E8E8 100%)`, minHeight:440, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"9rem", border:`1px solid ${THEME.borderLight}`, borderRadius:14, position:"relative", ...gs.glow }}>
+          <div style={{ position:"absolute", inset:0, background:`radial-gradient(circle at 60% 40%,rgba(0,0,0,0.05) 0%,transparent 60%)`, borderRadius:14 }} />
+          <span style={{ position:"relative", filter:`drop-shadow(0 8px 20px rgba(0,0,0,0.15))` }}>{p.emoji}</span>
+          {discount>0 && <span style={{ position:"absolute", top:16, left:16, background:THEME.error, color:"#fff", padding:"6px 14px", fontSize:"0.8rem", fontWeight:700, borderRadius:5 }}>-{discount}% OFF</span>}
+          <button onClick={()=>toggleWishlist(p.id)} style={{ position:"absolute", top:12, right:12, background:"rgba(255,255,255,0.85)", border:`1px solid ${inWishlist?THEME.error:THEME.border}`, cursor:"pointer", color:inWishlist?THEME.error:THEME.textMuted, fontSize:"1.5rem", width:44, height:44, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%", backdropFilter:"blur(8px)", transition:"all 0.2s" }}>
+            {inWishlist?"♥":"♡"}
+          </button>
+        </div>
+        <div>
+          <div style={{ display:"flex", gap:9, marginBottom:15 }}>
+            <span style={gs.tag}>{p.category}</span>
+            {p.bestseller && <span style={gs.tagGold}>⭐ Bestseller</span>}
+          </div>
+          {p.sku && <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginBottom:10, letterSpacing:"0.08em" }}>SKU: {p.sku}</div>}
+          <h1 style={{ fontSize:"2rem", fontWeight:800, margin:"0 0 12px", lineHeight:1.15 }}>{p.name}</h1>
+          <div style={{ marginBottom:18 }}><Stars rating={p.rating} /><span style={{ color:THEME.textDim, fontSize:"0.72rem", marginLeft:8 }}>({p.reviewsCount} reviews)</span></div>
+          <div style={{ display:"flex", alignItems:"baseline", gap:14, marginBottom:26 }}>
+            <span style={{ fontSize:"2.3rem", fontWeight:900, background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{fmt(price)}</span>
+            {p.discountPrice && <span style={{ fontSize:"1.1rem", color:THEME.textDim, textDecoration:"line-through" }}>{fmt(p.price)}</span>}
+          </div>
+          <p style={{ color:THEME.textMuted, fontSize:"0.9rem", lineHeight:1.85, marginBottom:30, paddingLeft:14, borderLeft:`3px solid ${THEME.accentBold}` }}>{p.description}</p>
+          <div style={{ marginBottom:22 }}>
+            <div style={{ fontSize:"0.74rem", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:10, color:THEME.textMuted, fontWeight:700 }}>Size {selSize&&<span style={{ color:THEME.accent }}>— {selSize}</span>}</div>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+              {p.sizes.map(s=><button key={s} onClick={()=>setSelSize(s)} style={{ ...gs.btnGhost, padding:"8px 16px", borderColor:selSize===s?THEME.accent:THEME.border, color:selSize===s?"#FFFFFF":THEME.textMuted, background:selSize===s?"#111111":"transparent", fontWeight:selSize===s?700:400 }}>{s}</button>)}
+            </div>
+          </div>
+          <div style={{ marginBottom:28 }}>
+            <div style={{ fontSize:"0.74rem", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:10, color:THEME.textMuted, fontWeight:700 }}>Color {selColor&&<span style={{ color:THEME.accent }}>— {selColor}</span>}</div>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+              {p.colors.map(c=><button key={c} onClick={()=>setSelColor(c)} style={{ ...gs.btnGhost, padding:"8px 16px", borderColor:selColor===c?THEME.accent:THEME.border, color:selColor===c?"#FFFFFF":THEME.textMuted, background:selColor===c?"#111111":"transparent" }}>{c}</button>)}
+            </div>
+          </div>
+          <div style={{ display:"flex", gap:12, alignItems:"center", marginBottom:16 }}>
+            <div style={{ display:"flex", border:`1px solid ${THEME.border}`, borderRadius:6 }}>
+              <button onClick={()=>setQty(Math.max(1,qty-1))} style={{ background:"none", border:"none", color:THEME.text, padding:"9px 16px", cursor:"pointer", fontSize:"1.1rem" }}>−</button>
+              <span style={{ padding:"9px 18px", borderLeft:`1px solid ${THEME.border}`, borderRight:`1px solid ${THEME.border}` }}>{qty}</span>
+              <button onClick={()=>setQty(qty+1)} style={{ background:"none", border:"none", color:THEME.text, padding:"9px 16px", cursor:"pointer", fontSize:"1.1rem" }}>+</button>
+            </div>
+            <button onClick={handleAdd} style={{ ...(added?{...gs.btn,background:THEME.gradientGreen}:gs.btnGold), flex:1 }}>
+              {added?"✓ ADDED TO CART!":"ADD TO CART"}
+            </button>
+          </div>
+          <div style={{ fontSize:"0.72rem", color:THEME.textDim }}>
+            Stock: <span style={{ color:p.stock>10?THEME.success:p.stock>0?THEME.warning:THEME.error, fontWeight:700 }}>{p.stock>0?`${p.stock} units left`:"Out of Stock"}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── WISHLIST ─────────────────────────────────────────────────────────────────
+function WishlistPage({ setPage }) {
+  const { wishlist, products, toggleWishlist, addToCart } = useStore();
+  const items = products.filter(p=>wishlist.includes(p.id));
+  return (
+    <div style={{ maxWidth:1000, margin:"0 auto", padding:"44px 28px" }}>
+      <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.5rem", letterSpacing:"0.08em", marginBottom:6, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", display:"inline-block" }}>WISHLIST</div>
+      <div style={{ color:THEME.textMuted, fontSize:"0.82rem", marginBottom:34 }}>{items.length} items saved</div>
+      {items.length===0 ? (
+        <div style={{ textAlign:"center", padding:80, color:THEME.textMuted }}>
+          <div style={{ fontSize:"3rem", marginBottom:16 }}>♡</div>
+          <div style={{ marginBottom:24 }}>Your wishlist is empty</div>
+          <button onClick={()=>setPage("shop")} style={gs.btn}>Browse Products</button>
+        </div>
+      ) : (
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))", gap:18 }}>
+          {items.map(p=>(
+            <div key={p.id} style={gs.card}>
+              <div style={{ background:`linear-gradient(145deg,#F0F0F0 0%,#E4E4E4 100%)`, height:182, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"4rem", cursor:"pointer", borderRadius:"10px 10px 0 0" }} onClick={()=>setPage({name:"product",id:p.id})}>{p.emoji}</div>
+              <div style={{ padding:"14px 16px 16px" }}>
+                <div style={{ fontSize:"0.9rem", fontWeight:600, marginBottom:4 }}>{p.name}</div>
+                <div style={{ fontWeight:800, background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", marginBottom:12 }}>{fmt(p.discountPrice||p.price)}</div>
+                <div style={{ display:"flex", gap:8 }}>
+                  <button onClick={()=>{addToCart(p,p.sizes[0],p.colors[0]);toggleWishlist(p.id);}} style={{ ...gs.btn, flex:1, padding:"9px", fontSize:"0.72rem" }}>Move to Cart</button>
+                  <button onClick={()=>toggleWishlist(p.id)} style={{ ...gs.btnGhost, padding:"9px 12px", color:THEME.error, borderColor:`rgba(211,47,47,0.27)` }}>✕</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── CART ─────────────────────────────────────────────────────────────────────
+function CartPage({ setPage }) {
+  const { cart, removeFromCart, updateQty, cartTotal } = useStore();
+  return (
+    <div style={{ maxWidth:920, margin:"0 auto", padding:"44px 28px" }}>
+      <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.5rem", letterSpacing:"0.08em", marginBottom:6, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", display:"inline-block" }}>YOUR CART</div>
+      <div style={{ color:THEME.textMuted, fontSize:"0.82rem", marginBottom:34 }}>{cart.length} items</div>
+      {cart.length===0 ? (
+        <div style={{ textAlign:"center", padding:80 }}>
+          <div style={{ fontSize:"3rem", marginBottom:16 }}>🛒</div>
+          <div style={{ color:THEME.textMuted, marginBottom:24 }}>Your cart is empty</div>
+          <button onClick={()=>setPage("shop")} style={gs.btn}>Shop Now</button>
+        </div>
+      ) : (
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 340px", gap:28 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            {cart.map((item,i)=>(
+              <div key={i} style={{ ...gs.card, display:"flex", gap:16, padding:18, alignItems:"center" }}>
+                <div style={{ background:`linear-gradient(145deg,#F0F0F0 0%,#E4E4E4 100%)`, width:86, height:86, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"2.6rem", flexShrink:0, borderRadius:8 }}>{item.emoji}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontWeight:700, marginBottom:4, fontSize:"0.93rem" }}>{item.name}</div>
+                  <div style={{ fontSize:"0.72rem", color:THEME.textMuted }}>Size: <span style={{ color:THEME.accent }}>{item.size}</span> · Color: <span style={{ color:THEME.accent }}>{item.color}</span></div>
+                  <div style={{ fontWeight:800, background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", marginTop:7 }}>{fmt((item.discountPrice||item.price)*item.qty)}</div>
+                </div>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <div style={{ display:"flex", border:`1px solid ${THEME.border}`, borderRadius:5 }}>
+                    <button onClick={()=>updateQty(item.id,item.size,item.color,item.qty-1)} style={{ background:"none", border:"none", color:THEME.text, padding:"5px 11px", cursor:"pointer" }}>−</button>
+                    <span style={{ padding:"5px 11px", borderLeft:`1px solid ${THEME.border}`, borderRight:`1px solid ${THEME.border}` }}>{item.qty}</span>
+                    <button onClick={()=>updateQty(item.id,item.size,item.color,item.qty+1)} style={{ background:"none", border:"none", color:THEME.text, padding:"5px 11px", cursor:"pointer" }}>+</button>
+                  </div>
+                  <button onClick={()=>removeFromCart(item.id,item.size,item.color)} style={{ background:"none", border:"none", color:THEME.error, cursor:"pointer", fontSize:"1.1rem" }}>✕</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ ...gs.card, ...gs.glow, padding:26, height:"fit-content", position:"sticky", top:82 }}>
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.2rem", letterSpacing:"0.08em", marginBottom:20, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>ORDER SUMMARY</div>
+            {cart.map((item,i)=><div key={i} style={{ display:"flex", justifyContent:"space-between", fontSize:"0.76rem", color:THEME.textMuted, marginBottom:7 }}><span>{item.name} ×{item.qty}</span><span>{fmt((item.discountPrice||item.price)*item.qty)}</span></div>)}
+            <div style={{ borderTop:`1px solid ${THEME.border}`, marginTop:16, paddingTop:16 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8, fontSize:"0.82rem" }}><span style={{ color:THEME.textMuted }}>Subtotal</span><span>{fmt(cartTotal)}</span></div>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:18, fontSize:"0.82rem" }}><span style={{ color:THEME.textMuted }}>Shipping</span><span style={{ color:THEME.success, fontWeight:700 }}>{cartTotal>=2999?"FREE 🎉":fmt(99)}</span></div>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:22, fontWeight:800, fontSize:"1.15rem" }}>
+                <span>Total</span>
+                <span style={{ background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{fmt(cartTotal>=2999?cartTotal:cartTotal+99)}</span>
+              </div>
+            </div>
+            <button onClick={()=>setPage("checkout")} style={{ ...gs.btnGold, width:"100%", padding:"14px" }}>PROCEED TO CHECKOUT →</button>
+            {cartTotal<2999 && <div style={{ fontSize:"0.68rem", color:THEME.textMuted, marginTop:12, textAlign:"center" }}>Add {fmt(2999-cartTotal)} more for free shipping</div>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── CHECKOUT ─────────────────────────────────────────────────────────────────
+function CheckoutPage({ setPage }) {
+  const { cart, cartTotal, placeOrder } = useStore();
+  const [form, setForm]   = useState({ name:"", phone:"", email:"", address:"", city:"", state:"", zip:"" });
+  const [errors, setErrors] = useState({});
+  const validate = () => {
+    const e={};
+    if(!form.name.trim()) e.name="Name is required";
+    if(!/^[6-9]\d{9}$/.test(form.phone)) e.phone="Valid 10-digit Indian phone required";
+    if(!/\S+@\S+\.\S+/.test(form.email)) e.email="Valid email required";
+    if(!form.address.trim()) e.address="Address is required";
+    if(!form.city.trim()) e.city="City is required";
+    if(!form.state.trim()) e.state="State is required";
+    if(!/^\d{6}$/.test(form.zip)) e.zip="Valid 6-digit PIN required";
+    return e;
+  };
+  const handleWA = () => {
+    const e=validate();
+    if(Object.keys(e).length){setErrors(e);return;}
+    const order=placeOrder(form);
+    const items=cart.map(i=>`• ${i.name} | ${i.size} | ${i.color} | Qty: ${i.qty}`).join("\n");
+    const total=cartTotal>=2999?cartTotal:cartTotal+99;
+    const msg=`🛒 *New Order - VYROX*\nOrder ID: *${order.orderId}*\n\n*Products:*\n${items}\n\n*Total: ₹${total.toLocaleString("en-IN")}*\n\n*Customer Details:*\nName: ${form.name}\nPhone: ${form.phone}\nAddress: ${form.address}, ${form.city}, ${form.state} - ${form.zip}`;
+    window.open(`https://wa.me/918320471216?text=${encodeURIComponent(msg)}`,"_blank");
+    setPage({name:"orderSuccess",orderId:order.orderId});
+  };
+  if(cart.length===0) return <div style={{ textAlign:"center", padding:80, color:THEME.textMuted }}>Cart is empty. <button onClick={()=>setPage("shop")} style={gs.btn}>Shop</button></div>;
+  return (
+    <div style={{ maxWidth:920, margin:"0 auto", padding:"44px 28px" }}>
+      <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.5rem", letterSpacing:"0.08em", marginBottom:32, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", display:"inline-block" }}>CHECKOUT</div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 320px", gap:28 }}>
+        <div style={{ ...gs.card, padding:30 }}>
+          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", letterSpacing:"0.1em", marginBottom:22, color:THEME.accent }}>DELIVERY DETAILS</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+            {[["name","Full Name","text"],["phone","Phone Number","tel"],["email","Email Address","email"],["address","Street Address","text"],["city","City","text"],["state","State","text"],["zip","PIN Code","text"]].map(([field,label,type])=>(
+              <div key={field} style={{ gridColumn:field==="address"?"1 / -1":"auto" }}>
+                <label style={{ display:"block", fontSize:"0.67rem", textTransform:"uppercase", letterSpacing:"0.1em", color:THEME.textMuted, marginBottom:6 }}>{label}</label>
+                <input type={type} value={form[field]} onChange={e=>setForm({...form,[field]:e.target.value})} style={{ ...gs.input, borderColor:errors[field]?THEME.error:THEME.border }} placeholder={label} />
+                {errors[field] && <div style={{ fontSize:"0.65rem", color:THEME.error, marginTop:4 }}>{errors[field]}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ ...gs.card, ...gs.glow, padding:26, height:"fit-content" }}>
+          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", letterSpacing:"0.1em", marginBottom:16, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>ORDER SUMMARY</div>
+          {cart.map((item,i)=><div key={i} style={{ display:"flex", justifyContent:"space-between", fontSize:"0.76rem", color:THEME.textMuted, marginBottom:6 }}><span>{item.name} ×{item.qty}</span><span>{fmt((item.discountPrice||item.price)*item.qty)}</span></div>)}
+          <div style={{ borderTop:`1px solid ${THEME.border}`, marginTop:14, paddingTop:14 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", fontWeight:800, marginBottom:22 }}>
+              <span>Total</span>
+              <span style={{ background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{fmt(cartTotal>=2999?cartTotal:cartTotal+99)}</span>
+            </div>
+          </div>
+          <button onClick={handleWA} style={{ background:"linear-gradient(135deg,#25D366 0%,#128C7E 100%)", color:"#fff", border:"none", borderRadius:6, width:"100%", padding:"14px", fontWeight:800, cursor:"pointer", fontSize:"0.88rem", letterSpacing:"0.06em", textTransform:"uppercase", boxShadow:"0 4px 20px rgba(37,211,102,0.4)", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+            <span style={{ fontSize:"1.2rem" }}>💬</span> ORDER VIA WHATSAPP
+          </button>
+          <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:10, textAlign:"center" }}>You'll be redirected to WhatsApp to confirm.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ORDER SUCCESS ────────────────────────────────────────────────────────────
+function OrderSuccessPage({ orderId, setPage }) {
+  return (
+    <div style={{ maxWidth:600, margin:"0 auto", padding:"80px 28px", textAlign:"center" }}>
+      <div style={{ fontSize:"4.5rem", marginBottom:20, filter:`drop-shadow(0 0 20px rgba(0,0,0,0.2))` }}>🎉</div>
+      <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.8rem", background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.08em", marginBottom:12 }}>ORDER PLACED!</div>
+      <div style={{ color:THEME.textMuted, marginBottom:18 }}>Your order has been sent via WhatsApp</div>
+      <div style={{ ...gs.card, padding:"18px 28px", marginBottom:36, display:"inline-block" }}>
+        Order ID: <span style={{ background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", fontWeight:800 }}>{orderId}</span>
+      </div>
+      <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
+        <button onClick={()=>setPage("shop")} style={gs.btnGold}>Continue Shopping</button>
+        <button onClick={()=>setPage("home")} style={gs.btnGhost}>Back to Home</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+function AdminPage({ setPage }) {
+  const { adminAuth, adminLogin, adminLogout, products, orders, addProduct, editProduct, deleteProduct, updateOrderStatus } = useStore();
+  const [lf, setLF]         = useState({user:"",pass:""});
+  const [le, setLE]         = useState("");
+  const [tab, setTab]       = useState("dashboard");
+  const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  if(!adminAuth) return (
+    <div style={{ maxWidth:420, margin:"80px auto", padding:24 }}>
+      <div style={{ ...gs.card, ...gs.glow, padding:40 }}>
+        <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.2rem", letterSpacing:"0.1em", marginBottom:4, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>ADMIN LOGIN</div>
+        <div style={{ color:THEME.textMuted, fontSize:"0.78rem", marginBottom:30 }}>VYROX Control Panel</div>
+        {[["user","Username","text"],["pass","Password","password"]].map(([field,label,type])=>(
+          <div key={field} style={{ marginBottom:16 }}>
+            <label style={{ fontSize:"0.67rem", textTransform:"uppercase", letterSpacing:"0.1em", color:THEME.textMuted, display:"block", marginBottom:6 }}>{label}</label>
+            <input type={type} value={lf[field]} onChange={e=>setLF({...lf,[field]:e.target.value})} style={gs.input} placeholder={label} onKeyDown={e=>e.key==="Enter"&&(()=>{if(!adminLogin(lf.user,lf.pass))setLE("Invalid credentials");else setLE("");})() } />
+          </div>
+        ))}
+        {le && <div style={{ color:THEME.error, fontSize:"0.78rem", marginBottom:14 }}>{le}</div>}
+        <button onClick={()=>{if(!adminLogin(lf.user,lf.pass))setLE("Invalid credentials");else setLE("");}} style={{ ...gs.btn, width:"100%", padding:"13px" }}>LOGIN →</button>
+        <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:20, textAlign:"center" }}>vyrox / #vyrox2026</div>
+      </div>
+    </div>
+  );
+
+  const totalRevenue = orders.reduce((s,o)=>s+o.total,0);
+  const tabs = [["dashboard","📊","Dashboard"],["products","📦","Products"],["orders","🧾","Orders"]];
+
+  return (
+    <div style={{ display:"flex", minHeight:"calc(100vh - 66px)" }}>
+      <div style={{ width:212, background:THEME.surface, borderRight:`1px solid ${THEME.border}`, padding:"24px 0", flexShrink:0 }}>
+        <div style={{ padding:"0 22px 22px", borderBottom:`1px solid ${THEME.border}`, marginBottom:16 }}>
+          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.12em" }}>ADMIN PANEL</div>
+          <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:2 }}>VYROX Control</div>
+        </div>
+        {tabs.map(([t,ic,l])=>(
+          <button key={t} onClick={()=>setTab(t)} style={{ display:"block", width:"100%", background:tab===t?"rgba(0,0,0,0.05)":"none", color:tab===t?THEME.accent:THEME.textMuted, border:"none", borderLeft:`3px solid ${tab===t?THEME.accent:"transparent"}`, padding:"13px 22px", cursor:"pointer", textAlign:"left", fontSize:"0.82rem", transition:"all 0.15s" }}>
+            {ic} {l}
+          </button>
+        ))}
+        <div style={{ padding:"16px 22px", marginTop:16, borderTop:`1px solid ${THEME.border}` }}>
+          <button onClick={adminLogout} style={{ ...gs.btnGhost, fontSize:"0.72rem", color:THEME.error, borderColor:`rgba(211,47,47,0.27)`, width:"100%" }}>⏻ Logout</button>
+        </div>
+      </div>
+
+      <div style={{ flex:1, padding:34, overflowY:"auto", background:THEME.bg }}>
+        {tab==="dashboard" && (
+          <div>
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2rem", letterSpacing:"0.06em", marginBottom:28, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>DASHBOARD</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16, marginBottom:40 }}>
+              {[["Total Products",products.length,"📦",THEME.gradientAccent],["Total Orders",orders.length,"🧾",THEME.gradientGold],["Total Revenue",fmt(totalRevenue),"💰",THEME.gradientGreen],["Wishlist","Active","❤️","linear-gradient(135deg,#F87171,#DC2626)"]].map(([label,value,icon,grad])=>(
+                <div key={label} style={{ ...gs.card, padding:26, position:"relative", overflow:"hidden" }}>
+                  <div style={{ position:"absolute", top:-18, right:-18, fontSize:"4rem", opacity:0.07 }}>{icon}</div>
+                  <div style={{ fontSize:"2rem", marginBottom:8 }}>{icon}</div>
+                  <div style={{ fontSize:"1.7rem", fontWeight:900, background:grad, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{value}</div>
+                  <div style={{ fontSize:"0.68rem", color:THEME.textDim, textTransform:"uppercase", letterSpacing:"0.08em", marginTop:5 }}>{label}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ ...gs.card, padding:26 }}>
+              <div style={{ fontFamily:"'Bebas Neue',sans-serif", letterSpacing:"0.08em", marginBottom:20, color:THEME.accent }}>RECENT ORDERS</div>
+              {orders.length===0 ? <div style={{ color:THEME.textMuted, fontSize:"0.85rem" }}>No orders yet.</div> : (
+                <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                  <thead><tr style={{ borderBottom:`1px solid ${THEME.border}` }}>
+                    {["Order ID","Customer","Total","Status","Date"].map(h=><th key={h} style={{ textAlign:"left", padding:"9px 12px", fontSize:"0.64rem", textTransform:"uppercase", color:THEME.textDim, letterSpacing:"0.1em" }}>{h}</th>)}
+                  </tr></thead>
+                  <tbody>
+                    {orders.slice(0,6).map(o=>(
+                      <tr key={o.orderId} style={{ borderBottom:`1px solid ${THEME.border}` }}>
+                        <td style={{ padding:"11px 12px", fontSize:"0.82rem", fontWeight:700 }}><span style={{ background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{o.orderId}</span></td>
+                        <td style={{ padding:"11px 12px", fontSize:"0.82rem" }}>{o.customer.name}</td>
+                        <td style={{ padding:"11px 12px", fontSize:"0.82rem", fontWeight:700 }}><span style={{ background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{fmt(o.total)}</span></td>
+                        <td style={{ padding:"11px 12px" }}><StatusBadge status={o.status} /></td>
+                        <td style={{ padding:"11px 12px", fontSize:"0.76rem", color:THEME.textMuted }}>{new Date(o.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        )}
+
+        {tab==="products" && (
+          <div>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:26 }}>
+              <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2rem", letterSpacing:"0.06em", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>PRODUCTS</div>
+              <button onClick={()=>{setShowAdd(true);setEditing(null);}} style={gs.btn}>+ ADD PRODUCT</button>
+            </div>
+            {(showAdd||editing) && <ProductForm initial={editing} onSave={data=>{editing?editProduct(editing.id,data):addProduct(data);setShowAdd(false);setEditing(null);}} onCancel={()=>{setShowAdd(false);setEditing(null);}} />}
+            <div style={gs.card}>
+              <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                <thead><tr style={{ borderBottom:`1px solid ${THEME.border}` }}>
+                  {["Product","Category","Price","Stock","Badges","Actions"].map(h=><th key={h} style={{ textAlign:"left", padding:"12px 16px", fontSize:"0.64rem", textTransform:"uppercase", color:THEME.textDim, letterSpacing:"0.08em" }}>{h}</th>)}
+                </tr></thead>
+                <tbody>
+                  {products.map(p=>(
+                    <tr key={p.id} style={{ borderBottom:`1px solid ${THEME.border}` }}>
+                      <td style={{ padding:"13px 16px" }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                          <span style={{ fontSize:"1.6rem" }}>{p.emoji||"📦"}</span>
+                          <div><div style={{ fontSize:"0.85rem", fontWeight:600 }}>{p.name}</div><div style={{ fontSize:"0.64rem", color:THEME.textDim }}>{p.sku}</div></div>
+                        </div>
+                      </td>
+                      <td style={{ padding:"13px 16px", fontSize:"0.76rem", color:THEME.textMuted }}>{p.category}</td>
+                      <td style={{ padding:"13px 16px" }}>
+                        <div style={{ fontWeight:700 }}><span style={{ background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{fmt(p.discountPrice||p.price)}</span></div>
+                        {p.discountPrice && <div style={{ fontSize:"0.67rem", color:THEME.textDim, textDecoration:"line-through" }}>{fmt(p.price)}</div>}
+                      </td>
+                      <td style={{ padding:"13px 16px" }}><span style={{ color:p.stock>10?THEME.success:p.stock>0?THEME.warning:THEME.error, fontWeight:700 }}>{p.stock}</span></td>
+                      <td style={{ padding:"13px 16px" }}>
+                        <div style={{ display:"flex", gap:5 }}>
+                          {p.bestseller && <span style={gs.tagGold}>Best</span>}
+                          {p.featured && <span style={gs.tag}>Feat</span>}
+                        </div>
+                      </td>
+                      <td style={{ padding:"13px 16px" }}>
+                        <div style={{ display:"flex", gap:7 }}>
+                          <button onClick={()=>setEditing(p)} style={{ ...gs.btnGhost, padding:"4px 12px", fontSize:"0.7rem" }}>Edit</button>
+                          <button onClick={()=>{if(confirm("Delete?"))deleteProduct(p.id);}} style={{ ...gs.btnGhost, padding:"4px 12px", fontSize:"0.7rem", color:THEME.error, borderColor:`rgba(211,47,47,0.27)` }}>Del</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {tab==="orders" && (
+          <div>
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2rem", letterSpacing:"0.06em", marginBottom:26, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>ORDERS</div>
+            {orders.length===0 ? <div style={{ ...gs.card, padding:60, textAlign:"center", color:THEME.textMuted }}>No orders yet.</div> : (
+              <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+                {orders.map(o=>(
+                  <div key={o.orderId} style={{ ...gs.card, padding:22 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:18, flexWrap:"wrap", gap:12 }}>
+                      <div>
+                        <div style={{ fontWeight:800, marginBottom:3 }}><span style={{ background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{o.orderId}</span></div>
+                        <div style={{ fontSize:"0.74rem", color:THEME.textMuted }}>{new Date(o.createdAt).toLocaleString()}</div>
+                      </div>
+                      <div style={{ display:"flex", gap:8, alignItems:"center", flexWrap:"wrap" }}>
+                        <StatusBadge status={o.status} />
+                        <select value={o.status} onChange={e=>updateOrderStatus(o.orderId,e.target.value)} style={{ ...gs.input, width:155, fontSize:"0.76rem", padding:"7px 10px" }}>
+                          {["Pending","Confirmed","Shipped","Delivered"].map(s=><option key={s} value={s}>{s}</option>)}
+                        </select>
+                        <a href={`https://wa.me/${o.customer.phone}`} target="_blank" rel="noreferrer" style={{ background:"linear-gradient(135deg,#25D366,#128C7E)", color:"#fff", border:"none", borderRadius:5, textDecoration:"none", fontSize:"0.74rem", padding:"8px 14px", fontWeight:700, letterSpacing:"0.06em" }}>💬 WA</a>
+                      </div>
+                    </div>
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+                      <div>
+                        <div style={{ fontSize:"0.64rem", textTransform:"uppercase", color:THEME.textDim, marginBottom:8, letterSpacing:"0.1em" }}>Customer</div>
+                        <div style={{ fontWeight:700 }}>{o.customer.name}</div>
+                        <div style={{ fontSize:"0.78rem", color:THEME.accent }}>{o.customer.phone}</div>
+                        <div style={{ fontSize:"0.76rem", color:THEME.textMuted }}>{o.customer.email}</div>
+                        <div style={{ fontSize:"0.71rem", color:THEME.textDim, marginTop:4 }}>{o.customer.address}, {o.customer.city}, {o.customer.state} — {o.customer.zip}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize:"0.64rem", textTransform:"uppercase", color:THEME.textDim, marginBottom:8, letterSpacing:"0.1em" }}>Items</div>
+                        {o.products.map((item,i)=><div key={i} style={{ fontSize:"0.76rem", color:THEME.textMuted, marginBottom:4 }}>{item.name} · {item.size} · {item.color} · ×{item.qty} · {fmt((item.discountPrice||item.price)*item.qty)}</div>)}
+                        <div style={{ fontWeight:800, marginTop:8 }}><span style={{ background:THEME.gradientGold, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Total: {fmt(o.total)}</span></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const map = { Pending:["#FBBF24","#78350F"], Confirmed:["#60A5FA","#1E3A5F"], Shipped:["#C084FC","#3B0764"], Delivered:["#34D399","#064E3B"] };
+  const [fg] = map[status]||[THEME.textMuted];
+  return <span style={{ background:`${fg}22`, color:fg, padding:"4px 12px", fontSize:"0.64rem", textTransform:"uppercase", letterSpacing:"0.1em", border:`1px solid ${fg}44`, borderRadius:"100px", fontWeight:700 }}>{status}</span>;
+}
+
+function ProductForm({ initial, onSave, onCancel }) {
+  const [form,setForm] = useState(initial||{name:"",price:"",discountPrice:"",category:"T-Shirts",description:"",sizes:[],colors:[],stock:"",sku:"",bestseller:false,featured:false,emoji:"📦"});
+  const f=(field,val)=>setForm(p=>({...p,[field]:val}));
+  const tog=(field,val)=>setForm(p=>({...p,[field]:p[field].includes(val)?p[field].filter(x=>x!==val):[...p[field],val]}));
+  return (
+    <div style={{ ...gs.card, ...gs.glow, padding:28, marginBottom:24 }}>
+      <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", letterSpacing:"0.1em", marginBottom:22, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>{initial?"EDIT PRODUCT":"ADD PRODUCT"}</div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+        {[["name","Product Name"],["price","Price (₹)"],["discountPrice","Discount Price (₹)"],["stock","Stock"],["sku","SKU"],["emoji","Emoji"]].map(([field,label])=>(
+          <div key={field}><label style={{ fontSize:"0.67rem", textTransform:"uppercase", color:THEME.textMuted, display:"block", marginBottom:5, letterSpacing:"0.08em" }}>{label}</label><input value={form[field]} onChange={e=>f(field,e.target.value)} style={gs.input} placeholder={label} /></div>
+        ))}
+        <div style={{ gridColumn:"1 / -1" }}>
+          <label style={{ fontSize:"0.67rem", textTransform:"uppercase", color:THEME.textMuted, display:"block", marginBottom:5 }}>Category</label>
+          <select value={form.category} onChange={e=>f("category",e.target.value)} style={gs.input}>{CATEGORIES.filter(c=>c!=="All").map(c=><option key={c} value={c}>{c}</option>)}</select>
+        </div>
+        <div style={{ gridColumn:"1 / -1" }}>
+          <label style={{ fontSize:"0.67rem", textTransform:"uppercase", color:THEME.textMuted, display:"block", marginBottom:5 }}>Description</label>
+          <textarea value={form.description} onChange={e=>f("description",e.target.value)} style={{ ...gs.input, height:80, resize:"vertical" }} />
+        </div>
+        <div>
+          <label style={{ fontSize:"0.67rem", textTransform:"uppercase", color:THEME.textMuted, display:"block", marginBottom:8 }}>Sizes</label>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>{SIZES.map(s=><button key={s} type="button" onClick={()=>tog("sizes",s)} style={{ ...gs.btnGhost, padding:"5px 11px", fontSize:"0.72rem", borderColor:form.sizes.includes(s)?THEME.accent:THEME.border, color:form.sizes.includes(s)?"#FFFFFF":THEME.textMuted, background:form.sizes.includes(s)?"#111111":"transparent" }}>{s}</button>)}</div>
+        </div>
+        <div>
+          <label style={{ fontSize:"0.67rem", textTransform:"uppercase", color:THEME.textMuted, display:"block", marginBottom:8 }}>Colors</label>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>{COLORS.map(c=><button key={c} type="button" onClick={()=>tog("colors",c)} style={{ ...gs.btnGhost, padding:"5px 11px", fontSize:"0.72rem", borderColor:form.colors.includes(c)?THEME.accent:THEME.border, color:form.colors.includes(c)?"#FFFFFF":THEME.textMuted, background:form.colors.includes(c)?"#111111":"transparent" }}>{c}</button>)}</div>
+        </div>
+        <div style={{ display:"flex", gap:20 }}>
+          <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:"0.78rem", color:THEME.textMuted }}><input type="checkbox" checked={form.bestseller} onChange={e=>f("bestseller",e.target.checked)} style={{ accentColor:THEME.accentBold }} /> Bestseller</label>
+          <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:"0.78rem", color:THEME.textMuted }}><input type="checkbox" checked={form.featured} onChange={e=>f("featured",e.target.checked)} style={{ accentColor:THEME.accentBold }} /> Featured</label>
+        </div>
+      </div>
+      <div style={{ display:"flex", gap:12, marginTop:22 }}>
+        <button onClick={()=>onSave({...form,price:+form.price,discountPrice:form.discountPrice?+form.discountPrice:null,stock:+form.stock})} style={gs.btn}>{initial?"SAVE CHANGES":"ADD PRODUCT"}</button>
+        <button onClick={onCancel} style={gs.btnGhost}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── ABOUT ────────────────────────────────────────────────────────────────────
+function AboutPage({ setPage }) {
+  return (
+    <div style={{ maxWidth:920, margin:"0 auto", padding:"68px 28px" }}>
+      <div style={{ textAlign:"center", marginBottom:68 }}>
+        <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"5.5rem", letterSpacing:"0.12em", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", filter:`drop-shadow(0 0 20px rgba(0,0,0,0.15))` }}>VYROX</div>
+        <div style={{ color:THEME.textMuted, fontSize:"1rem", maxWidth:520, margin:"18px auto 0", lineHeight:1.85 }}>
+          Premium fashion & lifestyle brand. We craft clothes for those who move with intention and live without apology.
+        </div>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:20, marginBottom:68 }}>
+        {[["Our Mission","📌","To deliver exceptional quality that punches above its price — premium materials, precise cuts, uncompromising standards."],["Our Aesthetic","🎨","Dark. Deliberate. Electric. VYROX is for people who understand that style is a language spoken in silence."],["Our Promise","🤝","Every stitch considered. Every product tested. Free returns within 7 days. Always."]].map(([t,ic,d])=>(
+          <div key={t} style={{ ...gs.card, padding:30, borderTop:`3px solid ${THEME.accentBold}` }}>
+            <div style={{ fontSize:"1.9rem", marginBottom:14 }}>{ic}</div>
+            <div style={{ background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", letterSpacing:"0.1em", marginBottom:12 }}>{t.toUpperCase()}</div>
+            <div style={{ color:THEME.textMuted, fontSize:"0.87rem", lineHeight:1.85 }}>{d}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ textAlign:"center" }}>
+        <button onClick={()=>setPage("shop")} style={{ ...gs.btnGold, padding:"14px 44px", fontSize:"0.9rem" }}>✦ SHOP THE COLLECTION →</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── ROOT ─────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [page, setPage] = useState("home");
+  useEffect(()=>{
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap";
+    document.head.appendChild(link);
+    const style = document.createElement("style");
+    style.textContent = `
+      * { scrollbar-width: thin; scrollbar-color: #CCCCCC #F5F5F5; }
+      *::-webkit-scrollbar { width: 6px; }
+      *::-webkit-scrollbar-track { background: #F5F5F5; }
+      *::-webkit-scrollbar-thumb { background: #CCCCCC; border-radius: 3px; }
+      select option { background: #FFFFFF !important; color: #111111 !important; }
+    `;
+    document.head.appendChild(style);
+  },[]);
+
+  const renderPage = () => {
+    if(typeof page==="object"){
+      if(page.name==="product")      return <ProductDetail productId={page.id} setPage={setPage} />;
+      if(page.name==="orderSuccess") return <OrderSuccessPage orderId={page.orderId} setPage={setPage} />;
+    }
+    switch(page){
+      case "home":     return <HomePage setPage={setPage} />;
+      case "shop":     return <ShopPage setPage={setPage} />;
+      case "wishlist": return <WishlistPage setPage={setPage} />;
+      case "cart":     return <CartPage setPage={setPage} />;
+      case "checkout": return <CheckoutPage setPage={setPage} />;
+      case "admin":    return <AdminPage setPage={setPage} />;
+      case "about":    return <AboutPage setPage={setPage} />;
+      default:         return <HomePage setPage={setPage} />;
+    }
+  };
+
+  return (
+    <StoreProvider>
+      <div style={gs.page}>
+        <Navbar page={typeof page==="string"?page:page.name} setPage={setPage} />
+        {renderPage()}
+        <footer style={{ borderTop:`1px solid ${THEME.border}`, padding:"38px 28px", marginTop:60, background:THEME.surface }}>
+          <div style={{ maxWidth:1400, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:16 }}>
+            <div>
+              <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.9rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.14em" }}>VYROX</div>
+              <div style={{ fontSize:"0.67rem", color:THEME.textDim, letterSpacing:"0.1em", marginTop:2 }}>PREMIUM FASHION & LIFESTYLE</div>
+            </div>
+            <div style={{ display:"flex", gap:24 }}>
+              {["home","shop","about"].map(p=><button key={p} onClick={()=>setPage(p)} style={{ background:"none", border:"none", color:THEME.textDim, cursor:"pointer", fontSize:"0.72rem", textTransform:"uppercase", letterSpacing:"0.1em" }}>{p}</button>)}
+            </div>
+            <div style={{ fontSize:"0.67rem", color:THEME.textDim }}>© 2026 VYROX. ALL RIGHTS RESERVED.</div>
+          </div>
+        </footer>
+      </div>
+    </StoreProvider>
+  );
+}
