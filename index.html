@@ -29,24 +29,73 @@ const SIZES  = ["XS","S","M","L","XL","XXL"];
 const COLORS = ["Black","White","Navy","Grey","Olive","Beige","Red","Blue","Green","Brown"];
 
 const MOCK_PRODUCTS = [
-  { id:"1",  name:"Obsidian Oversized Tee",     price:1299, discountPrice:999,  category:"T-Shirts",         description:"Premium 300gsm cotton oversized tee with dropped shoulders. Washed black finish.",       sizes:["S","M","L","XL","XXL"],    colors:["Black","White","Grey"],  stock:48, sku:"VYX-TSH-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:124, emoji:"👕" },
-  { id:"2",  name:"Phantom Polo",               price:1799, discountPrice:1499, category:"Polo T-Shirts",    description:"Luxury piqué cotton polo with embroidered VYROX crest. Slim fit.",                      sizes:["S","M","L","XL"],          colors:["Navy","White","Black"],  stock:32, sku:"VYX-POL-001", bestseller:true,  featured:false, rating:4.6, reviewsCount:89,  emoji:"🎽" },
-  { id:"3",  name:"Arctic Fleece Hoodie",       price:2999, discountPrice:2499, category:"Hoodies",          description:"500gsm fleece lined hoodie with kangaroo pocket. Brushed interior.",                    sizes:["S","M","L","XL","XXL"],    colors:["Grey","Black","White"],  stock:25, sku:"VYX-HOD-001", bestseller:true,  featured:true,  rating:4.9, reviewsCount:203, emoji:"🧥" },
-  { id:"4",  name:"Raw Edge Selvedge Jeans",    price:3499, discountPrice:2999, category:"Jeans",            description:"14oz Japanese selvedge denim. Slim straight cut with raw hem.",                         sizes:["28","30","32","34","36"],   colors:["Blue","Black"],          stock:22, sku:"VYX-JNS-001", bestseller:true,  featured:false, rating:4.8, reviewsCount:156, emoji:"👖" },
-  { id:"5",  name:"VX Runner Pro",              price:5999, discountPrice:4999, category:"Sneakers",         description:"EVA foam midsole with mesh upper. Responsive cushioning for all-day wear.",             sizes:["7","8","9","10","11","12"], colors:["White","Black","Grey"],  stock:18, sku:"VYX-SNK-001", bestseller:true,  featured:true,  rating:4.9, reviewsCount:312, emoji:"👟" },
-  { id:"6",  name:"Desert Suede Loafers",       price:3999, discountPrice:null, category:"Casual Shoes",     description:"Premium suede loafers with crepe rubber sole. Handcrafted in Portugal.",                sizes:["7","8","9","10","11"],     colors:["Brown","Beige","Black"], stock:12, sku:"VYX-CAS-001", bestseller:false, featured:true,  rating:4.6, reviewsCount:54,  emoji:"🥾" },
-  { id:"7",  name:"Oxford Derby Shoes",         price:6499, discountPrice:5499, category:"Formal Shoes",     description:"Full-grain leather Derby shoes with leather sole. Goodyear welted.",                    sizes:["7","8","9","10","11","12"], colors:["Black","Brown"],         stock:9,  sku:"VYX-FRM-001", bestseller:false, featured:false, rating:4.8, reviewsCount:38,  emoji:"👞" },
-  { id:"8",  name:"Cloud Slides",               price:899,  discountPrice:699,  category:"Slides & Slippers",description:"Ultra-cushioned EVA slides with contoured footbed.",                                   sizes:["7","8","9","10","11"],     colors:["Black","White","Grey"],  stock:67, sku:"VYX-SLD-001", bestseller:true,  featured:false, rating:4.5, reviewsCount:189, emoji:"🩴" },
-  { id:"9",  name:"Sport Shoes VX-Air",         price:4499, discountPrice:3799, category:"Shoes",            description:"Lightweight sport shoes with breathable knit upper and rubber outsole.",                sizes:["7","8","9","10","11","12"], colors:["Black","White","Grey"],  stock:30, sku:"VYX-SHO-001", bestseller:false, featured:true,  rating:4.7, reviewsCount:76,  emoji:"👠" },
-  { id:"10", name:"Minimalist Card Wallet",     price:1299, discountPrice:999,  category:"Accessories",      description:"Slim aluminum card holder with RFID blocking. Holds 8 cards.",                          sizes:["One Size"],                colors:["Black","Grey"],          stock:76, sku:"VYX-ACC-001", bestseller:true,  featured:false, rating:4.6, reviewsCount:241, emoji:"💳" },
-  { id:"11", name:"Chrono Field Watch",         price:8999, discountPrice:7499, category:"Watches",          description:"Japanese Miyota movement, sapphire crystal, 200m water resistance.",                   sizes:["One Size"],                colors:["Black","Brown"],         stock:7,  sku:"VYX-WTC-001", bestseller:false, featured:true,  rating:4.9, reviewsCount:29,  emoji:"⌚" },
-  { id:"12", name:"VX Smart Watch Pro",         price:6999, discountPrice:5999, category:"Smart Watches",    description:"1.8\" AMOLED display, health tracking, 7-day battery, IP68 waterproof.",               sizes:["One Size"],                colors:["Black","Silver","White"],stock:15, sku:"VYX-SWT-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:143, emoji:"⌚" },
-  { id:"13", name:"VX Studio Headphones",       price:4999, discountPrice:3999, category:"Headphones",       description:"40mm drivers, active noise cancellation, 30hr battery, foldable design.",              sizes:["One Size"],                colors:["Black","White"],         stock:20, sku:"VYX-HDP-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:198, emoji:"🎧" },
-  { id:"14", name:"VX Buds Pro",                price:3499, discountPrice:2799, category:"Earbuds",          description:"TWS earbuds with ANC, 8hr playback + 24hr case, IPX5 water resistant.",               sizes:["One Size"],                colors:["Black","White"],         stock:35, sku:"VYX-EBD-001", bestseller:true,  featured:false, rating:4.7, reviewsCount:267, emoji:"🎵" },
-  { id:"15", name:"VX Wired Earphones",         price:799,  discountPrice:599,  category:"Earphones",        description:"10mm dynamic driver earphones with mic, tangle-free cable, 3.5mm jack.",               sizes:["One Size"],                colors:["Black","White"],         stock:90, sku:"VYX-EPH-001", bestseller:false, featured:false, rating:4.3, reviewsCount:312, emoji:"🎶" },
-  { id:"16", name:"VX 65W GaN Charger",         price:1999, discountPrice:1599, category:"Charger",          description:"65W GaN USB-C PD charger, supports PPS fast charging, universal compatibility.",       sizes:["One Size"],                colors:["Black","White"],         stock:50, sku:"VYX-CHR-001", bestseller:false, featured:true,  rating:4.5, reviewsCount:88,  emoji:"🔌" },
-  { id:"17", name:"VX 240W Braided USB-C Cable",price:699,  discountPrice:499,  category:"Charging Cable",   description:"240W USB-C to USB-C braided cable, 1m & 2m options, supports 48V/5A fast charge.",      sizes:["One Size"],                colors:["Black","White"],         stock:120, sku:"VYX-CBL-001", bestseller:false, featured:false, rating:4.4, reviewsCount:154, emoji:"🔋" },
-  { id:"18", name:"Bone Conduction Earbuds",    price:3999, discountPrice:2999, category:"Earbuds",          description:"Open-ear bone conduction. 8hr battery, IP55 water resistant.",                         sizes:["One Size"],                colors:["Black","Grey"],          stock:21, sku:"VYX-TCH-001", bestseller:false, featured:true,  rating:4.7, reviewsCount:198, emoji:"🎧" },
+  { id:"1",  name:"Obsidian Oversized Tee",     price:1299, discountPrice:999,  category:"T-Shirts",         description:"Premium 300gsm cotton oversized tee with dropped shoulders. Washed black finish.",       sizes:["S","M","L","XL","XXL"],    colors:["Black","White","Grey"],  stock:48, sku:"SMB-TSH-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:124, emoji:"👕" },
+  { id:"2",  name:"Phantom Polo",               price:1799, discountPrice:1499, category:"Polo T-Shirts",    description:"Luxury piqué cotton polo with embroidered SHOEMOB crest. Slim fit.",                      sizes:["S","M","L","XL"],          colors:["Navy","White","Black"],  stock:32, sku:"SMB-POL-001", bestseller:true,  featured:false, rating:4.6, reviewsCount:89,  emoji:"🎽" },
+  { id:"3",  name:"Arctic Fleece Hoodie",       price:2999, discountPrice:2499, category:"Hoodies",          description:"500gsm fleece lined hoodie with kangaroo pocket. Brushed interior.",                    sizes:["S","M","L","XL","XXL"],    colors:["Grey","Black","White"],  stock:25, sku:"SMB-HOD-001", bestseller:true,  featured:true,  rating:4.9, reviewsCount:203, emoji:"🧥" },
+  { id:"4",  name:"Raw Edge Selvedge Jeans",    price:3499, discountPrice:2999, category:"Jeans",            description:"14oz Japanese selvedge denim. Slim straight cut with raw hem.",                         sizes:["28","30","32","34","36"],   colors:["Blue","Black"],          stock:22, sku:"SMB-JNS-001", bestseller:true,  featured:false, rating:4.8, reviewsCount:156, emoji:"👖" },
+  { id:"5",  name:"VX Runner Pro",              price:5999, discountPrice:4999, category:"Sneakers",         description:"EVA foam midsole with mesh upper. Responsive cushioning for all-day wear.",             sizes:["7","8","9","10","11","12"], colors:["White","Black","Grey"],  stock:18, sku:"SMB-SNK-001", bestseller:true,  featured:true,  rating:4.9, reviewsCount:312, emoji:"👟" },
+  { id:"6",  name:"Desert Suede Loafers",       price:3999, discountPrice:null, category:"Casual Shoes",     description:"Premium suede loafers with crepe rubber sole. Handcrafted in Portugal.",                sizes:["7","8","9","10","11"],     colors:["Brown","Beige","Black"], stock:12, sku:"SMB-CAS-001", bestseller:false, featured:true,  rating:4.6, reviewsCount:54,  emoji:"🥾" },
+  { id:"7",  name:"Oxford Derby Shoes",         price:6499, discountPrice:5499, category:"Formal Shoes",     description:"Full-grain leather Derby shoes with leather sole. Goodyear welted.",                    sizes:["7","8","9","10","11","12"], colors:["Black","Brown"],         stock:9,  sku:"SMB-FRM-001", bestseller:false, featured:false, rating:4.8, reviewsCount:38,  emoji:"👞" },
+  { id:"8",  name:"Cloud Slides",               price:899,  discountPrice:699,  category:"Slides & Slippers",description:"Ultra-cushioned EVA slides with contoured footbed.",                                   sizes:["7","8","9","10","11"],     colors:["Black","White","Grey"],  stock:67, sku:"SMB-SLD-001", bestseller:true,  featured:false, rating:4.5, reviewsCount:189, emoji:"🩴" },
+  { id:"9",  name:"Sport Shoes VX-Air",         price:4499, discountPrice:3799, category:"Shoes",            description:"Lightweight sport shoes with breathable knit upper and rubber outsole.",                sizes:["7","8","9","10","11","12"], colors:["Black","White","Grey"],  stock:30, sku:"SMB-SHO-001", bestseller:false, featured:true,  rating:4.7, reviewsCount:76,  emoji:"👠" },
+  { id:"10", name:"Minimalist Card Wallet",     price:1299, discountPrice:999,  category:"Accessories",      description:"Slim aluminum card holder with RFID blocking. Holds 8 cards.",                          sizes:["One Size"],                colors:["Black","Grey"],          stock:76, sku:"SMB-ACC-001", bestseller:true,  featured:false, rating:4.6, reviewsCount:241, emoji:"💳" },
+  { id:"11", name:"Chrono Field Watch",         price:8999, discountPrice:7499, category:"Watches",          description:"Japanese Miyota movement, sapphire crystal, 200m water resistance.",                   sizes:["One Size"],                colors:["Black","Brown"],         stock:7,  sku:"SMB-WTC-001", bestseller:false, featured:true,  rating:4.9, reviewsCount:29,  emoji:"⌚" },
+  { id:"12", name:"VX Smart Watch Pro",         price:6999, discountPrice:5999, category:"Smart Watches",    description:"1.8\" AMOLED display, health tracking, 7-day battery, IP68 waterproof.",               sizes:["One Size"],                colors:["Black","Silver","White"],stock:15, sku:"SMB-SWT-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:143, emoji:"⌚" },
+  { id:"13", name:"VX Studio Headphones",       price:4999, discountPrice:3999, category:"Headphones",       description:"40mm drivers, active noise cancellation, 30hr battery, foldable design.",              sizes:["One Size"],                colors:["Black","White"],         stock:20, sku:"SMB-HDP-001", bestseller:true,  featured:true,  rating:4.8, reviewsCount:198, emoji:"🎧" },
+  { id:"14", name:"VX Buds Pro",                price:3499, discountPrice:2799, category:"Earbuds",          description:"TWS earbuds with ANC, 8hr playback + 24hr case, IPX5 water resistant.",               sizes:["One Size"],                colors:["Black","White"],         stock:35, sku:"SMB-EBD-001", bestseller:true,  featured:false, rating:4.7, reviewsCount:267, emoji:"🎵" },
+  { id:"15", name:"VX Wired Earphones",         price:799,  discountPrice:599,  category:"Earphones",        description:"10mm dynamic driver earphones with mic, tangle-free cable, 3.5mm jack.",               sizes:["One Size"],                colors:["Black","White"],         stock:90, sku:"SMB-EPH-001", bestseller:false, featured:false, rating:4.3, reviewsCount:312, emoji:"🎶" },
+  { id:"16", name:"VX 65W GaN Charger",         price:1999, discountPrice:1599, category:"Charger",          description:"65W GaN USB-C PD charger, supports PPS fast charging, universal compatibility.",       sizes:["One Size"],                colors:["Black","White"],         stock:50, sku:"SMB-CHR-001", bestseller:false, featured:true,  rating:4.5, reviewsCount:88,  emoji:"🔌" },
+  { id:"17", name:"VX 240W Braided USB-C Cable",price:699,  discountPrice:499,  category:"Charging Cable",   description:"240W USB-C to USB-C braided cable, 1m & 2m options, supports 48V/5A fast charge.",      sizes:["One Size"],                colors:["Black","White"],         stock:120, sku:"SMB-CBL-001", bestseller:false, featured:false, rating:4.4, reviewsCount:154, emoji:"🔋" },
+  { id:"18", name:"Bone Conduction Earbuds",    price:3999, discountPrice:2999, category:"Earbuds",          description:"Open-ear bone conduction. 8hr battery, IP55 water resistant.",                         sizes:["One Size"],                colors:["Black","Grey"],          stock:21, sku:"SMB-TCH-001", bestseller:false, featured:true,  rating:4.7, reviewsCount:198, emoji:"🎧" },
+  { id:"19", name:"Drop Shoulder Vintage Tee",  price:999,  discountPrice:799,  category:"T-Shirts",         description:"Garment-dyed vintage tee with drop shoulder silhouette. Relaxed everyday fit.",         sizes:["S","M","L","XL","XXL"],    colors:["White","Grey","Beige"],  stock:62, sku:"SMB-TSH-002", bestseller:false, featured:false, rating:4.4, reviewsCount:88,  emoji:"👕" },
+  { id:"20", name:"Striped Essential Tee",      price:1099, discountPrice:null, category:"T-Shirts",         description:"Classic horizontal stripe tee in breathable cotton jersey. Slim fit.",                  sizes:["S","M","L","XL"],          colors:["Black","White","Navy"],  stock:40, sku:"SMB-TSH-003", bestseller:false, featured:false, rating:4.3, reviewsCount:54,  emoji:"👕" },
+  { id:"21", name:"Graphic Logo Tee",           price:1199, discountPrice:899,  category:"T-Shirts",         description:"Bold front graphic print on 180gsm cotton. Unisex oversized cut.",                      sizes:["S","M","L","XL","XXL"],    colors:["Black","White"],         stock:55, sku:"SMB-TSH-004", bestseller:true,  featured:false, rating:4.6, reviewsCount:132, emoji:"👕" },
+  { id:"22", name:"Longline Curved Hem Tee",    price:1299, discountPrice:1099, category:"T-Shirts",         description:"Extended length tee with curved hem. 240gsm heavy cotton.",                             sizes:["S","M","L","XL","XXL"],    colors:["Black","Grey","Olive"],  stock:38, sku:"SMB-TSH-005", bestseller:false, featured:true,  rating:4.5, reviewsCount:76,  emoji:"👕" },
+  { id:"23", name:"Classic Pique Polo",         price:1599, discountPrice:1299, category:"Polo T-Shirts",    description:"Timeless pique polo in premium cotton blend. Ribbed collar and cuffs.",                  sizes:["S","M","L","XL"],          colors:["White","Navy","Black"],  stock:29, sku:"SMB-POL-002", bestseller:false, featured:false, rating:4.4, reviewsCount:67,  emoji:"🎽" },
+  { id:"24", name:"Zip Neck Performance Polo",  price:1999, discountPrice:1699, category:"Polo T-Shirts",    description:"Quarter-zip polo with moisture-wicking fabric. Ideal for active wear.",                  sizes:["S","M","L","XL","XXL"],    colors:["Black","Grey","Navy"],   stock:22, sku:"SMB-POL-003", bestseller:false, featured:false, rating:4.5, reviewsCount:43,  emoji:"🎽" },
+  { id:"25", name:"Zip-Up Tech Fleece Hoodie",  price:3299, discountPrice:2799, category:"Hoodies",          description:"Slim-fit zip hoodie in tech fleece. Tapered hem, side pockets.",                        sizes:["S","M","L","XL","XXL"],    colors:["Black","Grey"],          stock:18, sku:"SMB-HOD-002", bestseller:false, featured:true,  rating:4.7, reviewsCount:91,  emoji:"🧥" },
+  { id:"26", name:"Vintage Washed Pullover",    price:2699, discountPrice:null, category:"Hoodies",          description:"Enzyme-washed pullover hoodie for a broken-in feel. Relaxed boxy fit.",                 sizes:["S","M","L","XL","XXL"],    colors:["Grey","Beige","Black"],  stock:31, sku:"SMB-HOD-003", bestseller:true,  featured:false, rating:4.8, reviewsCount:115, emoji:"🧥" },
+  { id:"27", name:"Sherpa Lined Hoodie",        price:3799, discountPrice:2999, category:"Hoodies",          description:"Double-layered hoodie with sherpa fleece lining for extreme warmth.",                   sizes:["S","M","L","XL"],          colors:["Black","Brown"],         stock:14, sku:"SMB-HOD-004", bestseller:false, featured:false, rating:4.6, reviewsCount:62,  emoji:"🧥" },
+  { id:"28", name:"Slim Taper Stretch Jeans",   price:2999, discountPrice:2499, category:"Jeans",            description:"2% elastane slim taper jeans. Comfortable stretch with structured look.",               sizes:["28","30","32","34","36"],   colors:["Blue","Black","Grey"],   stock:26, sku:"SMB-JNS-002", bestseller:true,  featured:true,  rating:4.7, reviewsCount:189, emoji:"👖" },
+  { id:"29", name:"Straight Leg Cargo Jeans",   price:3199, discountPrice:null, category:"Jeans",            description:"Workwear-inspired straight leg jeans with cargo pockets.",                              sizes:["28","30","32","34","36"],   colors:["Black","Olive"],         stock:19, sku:"SMB-JNS-003", bestseller:false, featured:false, rating:4.4, reviewsCount:73,  emoji:"👖" },
+  { id:"30", name:"Acid Wash Baggy Jeans",      price:3499, discountPrice:2999, category:"Jeans",            description:"Y2K-inspired acid wash baggy jeans. Loose fit, vintage finish.",                        sizes:["28","30","32","34","36"],   colors:["Blue","Grey"],           stock:17, sku:"SMB-JNS-004", bestseller:false, featured:true,  rating:4.5, reviewsCount:98,  emoji:"👖" },
+  { id:"31", name:"VX Court Low",               price:4499, discountPrice:3999, category:"Sneakers",         description:"Clean court-style low-top sneakers. Leather upper, rubber cupsole.",                    sizes:["7","8","9","10","11","12"], colors:["White","Black"],         stock:24, sku:"SMB-SNK-002", bestseller:true,  featured:true,  rating:4.8, reviewsCount:243, emoji:"👟" },
+  { id:"32", name:"VX Chunky Platform",         price:5499, discountPrice:4499, category:"Sneakers",         description:"Bold chunky sole sneaker with padded tongue. Street-ready silhouette.",                 sizes:["7","8","9","10","11"],     colors:["White","Black","Grey"],  stock:13, sku:"SMB-SNK-003", bestseller:false, featured:true,  rating:4.6, reviewsCount:87,  emoji:"👟" },
+  { id:"33", name:"VX Trail Hiker Sneaker",     price:6999, discountPrice:5999, category:"Sneakers",         description:"Grippy trail-ready sneakers with waterproof suede upper.",                              sizes:["7","8","9","10","11","12"], colors:["Brown","Black","Grey"],  stock:10, sku:"SMB-SNK-004", bestseller:false, featured:false, rating:4.7, reviewsCount:55,  emoji:"👟" },
+  { id:"34", name:"Slip-On Canvas Shoes",       price:1999, discountPrice:1599, category:"Casual Shoes",     description:"Lightweight slip-on canvas shoes with memory foam insole.",                             sizes:["7","8","9","10","11","12"], colors:["White","Black","Navy"],  stock:45, sku:"SMB-CAS-002", bestseller:true,  featured:false, rating:4.5, reviewsCount:176, emoji:"🥾" },
+  { id:"35", name:"Leather Moc Toe Boot",       price:5499, discountPrice:null, category:"Casual Shoes",     description:"Full grain leather moc toe boot with Vibram sole. Handstitched.",                       sizes:["7","8","9","10","11"],     colors:["Brown","Black"],         stock:8,  sku:"SMB-CAS-003", bestseller:false, featured:true,  rating:4.8, reviewsCount:41,  emoji:"🥾" },
+  { id:"36", name:"Patent Leather Oxfords",     price:7999, discountPrice:6499, category:"Formal Shoes",     description:"High-gloss patent leather Oxford shoes. Perfect for formal occasions.",                  sizes:["7","8","9","10","11","12"], colors:["Black"],                 stock:6,  sku:"SMB-FRM-002", bestseller:false, featured:false, rating:4.9, reviewsCount:22,  emoji:"👞" },
+  { id:"37", name:"Monk Strap Brogue",          price:6999, discountPrice:5499, category:"Formal Shoes",     description:"Double monk strap brogue with laser-cut detailing. Italian-inspired.",                  sizes:["7","8","9","10","11"],     colors:["Brown","Black"],         stock:9,  sku:"SMB-FRM-003", bestseller:false, featured:false, rating:4.7, reviewsCount:34,  emoji:"👞" },
+  { id:"38", name:"Moulded Arch Slides",        price:1199, discountPrice:899,  category:"Slides & Slippers",description:"Ergonomic arch-support slides with cushioned footbed. Daily comfort.",                 sizes:["7","8","9","10","11"],     colors:["Black","White","Brown"], stock:80, sku:"SMB-SLD-002", bestseller:false, featured:false, rating:4.3, reviewsCount:201, emoji:"🩴" },
+  { id:"39", name:"Fluffy Plush Slippers",      price:799,  discountPrice:599,  category:"Slides & Slippers",description:"Super-soft plush slippers with anti-slip rubber sole. Indoor and outdoor use.",        sizes:["7","8","9","10","11"],     colors:["Grey","Beige","Black"],  stock:95, sku:"SMB-SLD-003", bestseller:true,  featured:false, rating:4.6, reviewsCount:342, emoji:"🩴" },
+  { id:"40", name:"VX Hiking Boot",             price:5999, discountPrice:4799, category:"Shoes",            description:"Mid-cut hiking boot with ankle support and waterproof membrane.",                      sizes:["7","8","9","10","11","12"], colors:["Brown","Black","Grey"],  stock:16, sku:"SMB-SHO-002", bestseller:false, featured:false, rating:4.6, reviewsCount:63,  emoji:"🥾" },
+  { id:"41", name:"VX Fashion Boot",            price:4999, discountPrice:3999, category:"Shoes",            description:"Chelsea-style fashion boot with elastic side gussets. Sleek minimal design.",          sizes:["7","8","9","10","11"],     colors:["Black","Brown"],         stock:20, sku:"SMB-SHO-003", bestseller:false, featured:true,  rating:4.7, reviewsCount:82,  emoji:"👢" },
+  { id:"42", name:"Woven Leather Belt",         price:899,  discountPrice:699,  category:"Accessories",      description:"Handwoven genuine leather belt. Reversible design, fits 28-40 inch waist.",            sizes:["One Size"],                colors:["Black","Brown"],         stock:58, sku:"SMB-ACC-002", bestseller:false, featured:false, rating:4.4, reviewsCount:119, emoji:"👜" },
+  { id:"43", name:"Clubmaster Sunglasses",      price:1999, discountPrice:1499, category:"Accessories",      description:"Retro clubmaster frames with UV400 polycarbonate lenses.",                             sizes:["One Size"],                colors:["Black","Brown"],         stock:33, sku:"SMB-ACC-003", bestseller:false, featured:false, rating:4.5, reviewsCount:93,  emoji:"🕶️" },
+  { id:"44", name:"Stainless Steel Flask",      price:1299, discountPrice:999,  category:"Accessories",      description:"500ml vacuum-insulated flask. Keeps hot 12hr, cold 24hr. Leak-proof lid.",             sizes:["One Size"],                colors:["Black","Silver"],        stock:44, sku:"SMB-ACC-004", bestseller:false, featured:false, rating:4.6, reviewsCount:77,  emoji:"🫙" },
+  { id:"45", name:"Crossbody Sling Bag",        price:1799, discountPrice:1399, category:"Accessories",      description:"Compact crossbody bag in vegan leather. 3 compartments, adjustable strap.",            sizes:["One Size"],                colors:["Black","Brown","Grey"],  stock:27, sku:"SMB-ACC-005", bestseller:true,  featured:true,  rating:4.7, reviewsCount:154, emoji:"👝" },
+  { id:"46", name:"Minimalist Mesh Watch",      price:4999, discountPrice:3999, category:"Watches",          description:"Ultra-thin 8mm case, stainless steel mesh band. Quartz movement.",                     sizes:["One Size"],                colors:["Silver","Black"],        stock:18, sku:"SMB-WTC-002", bestseller:false, featured:false, rating:4.6, reviewsCount:61,  emoji:"⌚" },
+  { id:"47", name:"Divers Automatic Watch",     price:14999,discountPrice:11999,category:"Watches",          description:"200m dive watch, automatic movement, ceramic bezel, sapphire glass.",                  sizes:["One Size"],                colors:["Black","Blue"],          stock:5,  sku:"SMB-WTC-003", bestseller:false, featured:true,  rating:4.9, reviewsCount:17,  emoji:"⌚" },
+  { id:"48", name:"VX Fit Band Ultra",          price:3999, discountPrice:2999, category:"Smart Watches",    description:"Slim fitness band, SpO2, heart rate, sleep tracking, 14-day battery.",                  sizes:["One Size"],                colors:["Black","White","Blue"],  stock:40, sku:"SMB-SWT-002", bestseller:true,  featured:false, rating:4.7, reviewsCount:217, emoji:"⌚" },
+  { id:"49", name:"VX Smart Watch Lite",        price:4499, discountPrice:3799, category:"Smart Watches",    description:"1.4 inch TFT display, Bluetooth calling, 100+ sports modes, 7-day battery.",           sizes:["One Size"],                colors:["Black","Silver"],        stock:28, sku:"SMB-SWT-003", bestseller:false, featured:false, rating:4.5, reviewsCount:143, emoji:"⌚" },
+  { id:"50", name:"VX Bass Headphones",         price:2499, discountPrice:1999, category:"Headphones",       description:"50mm bass-enhanced drivers, foldable design, 25hr battery, wired and wireless.",       sizes:["One Size"],                colors:["Black","White"],         stock:32, sku:"SMB-HDP-002", bestseller:false, featured:false, rating:4.4, reviewsCount:167, emoji:"🎧" },
+  { id:"51", name:"VX Pro Wireless ANC",        price:6999, discountPrice:5499, category:"Headphones",       description:"Hybrid ANC, LDAC codec support, 40hr battery, premium aluminum build.",               sizes:["One Size"],                colors:["Black","Silver"],        stock:12, sku:"SMB-HDP-003", bestseller:true,  featured:true,  rating:4.9, reviewsCount:89,  emoji:"🎧" },
+  { id:"52", name:"VX Air Buds",                price:1999, discountPrice:1499, category:"Earbuds",          description:"Lightweight TWS buds, 6hr playback, 18hr case, IPX4 splash proof.",                   sizes:["One Size"],                colors:["White","Black"],         stock:55, sku:"SMB-EBD-002", bestseller:true,  featured:false, rating:4.5, reviewsCount:312, emoji:"🎵" },
+  { id:"53", name:"VX Sport Buds",              price:2799, discountPrice:2299, category:"Earbuds",          description:"Secure ear-hook design for sports. ANC, 8hr battery, IP55 sweat proof.",               sizes:["One Size"],                colors:["Black","Grey"],          stock:38, sku:"SMB-EBD-003", bestseller:false, featured:false, rating:4.6, reviewsCount:187, emoji:"🎵" },
+  { id:"54", name:"VX Buds Lite",               price:1299, discountPrice:999,  category:"Earbuds",          description:"Entry-level TWS earbuds, 5hr battery plus 15hr case, touch controls.",                 sizes:["One Size"],                colors:["White","Black","Blue"],  stock:70, sku:"SMB-EBD-004", bestseller:false, featured:false, rating:4.2, reviewsCount:423, emoji:"🎵" },
+  { id:"55", name:"VX Bass IEM",                price:1299, discountPrice:999,  category:"Earphones",        description:"Balanced armature IEM with detachable cable. Audiophile-grade sound.",                 sizes:["One Size"],                colors:["Black","Silver"],        stock:29, sku:"SMB-EPH-002", bestseller:false, featured:true,  rating:4.7, reviewsCount:98,  emoji:"🎶" },
+  { id:"56", name:"VX Type-C Earphones",        price:699,  discountPrice:499,  category:"Earphones",        description:"USB-C digital earphones with DAC chip. Hi-Res Audio certified.",                       sizes:["One Size"],                colors:["Black","White"],         stock:85, sku:"SMB-EPH-003", bestseller:true,  featured:false, rating:4.4, reviewsCount:267, emoji:"🎶" },
+  { id:"57", name:"VX Gaming Earphones",        price:999,  discountPrice:799,  category:"Earphones",        description:"7.1 virtual surround sound earphones with noise-cancelling mic for gaming.",            sizes:["One Size"],                colors:["Black"],                 stock:42, sku:"SMB-EPH-004", bestseller:false, featured:false, rating:4.3, reviewsCount:134, emoji:"🎮" },
+  { id:"58", name:"VX 20W USB-C Charger",       price:799,  discountPrice:599,  category:"Charger",          description:"Compact 20W USB-C PD wall charger. Supports iPhone, iPad, Android fast charging.",      sizes:["One Size"],                colors:["Black","White"],         stock:100,sku:"SMB-CHR-002", bestseller:true,  featured:false, rating:4.5, reviewsCount:389, emoji:"🔌" },
+  { id:"59", name:"VX 100W Dual USB-C Charger", price:2999, discountPrice:2399, category:"Charger",          description:"100W dual USB-C GaN charger. Charges two devices simultaneously at full speed.",        sizes:["One Size"],                colors:["Black"],                 stock:35, sku:"SMB-CHR-003", bestseller:false, featured:true,  rating:4.7, reviewsCount:112, emoji:"🔌" },
+  { id:"60", name:"VX 10000mAh Power Bank",     price:2499, discountPrice:1999, category:"Charger",          description:"Slim 10000mAh power bank, 22.5W fast charge, USB-C and USB-A dual output.",           sizes:["One Size"],                colors:["Black","White"],         stock:48, sku:"SMB-CHR-004", bestseller:true,  featured:true,  rating:4.8, reviewsCount:276, emoji:"🔋" },
+  { id:"61", name:"VX Wireless Charger Pad",    price:1499, discountPrice:1199, category:"Charger",          description:"15W Qi wireless charging pad, compatible with all Qi devices, LED indicator.",         sizes:["One Size"],                colors:["Black","White"],         stock:60, sku:"SMB-CHR-005", bestseller:false, featured:false, rating:4.4, reviewsCount:198, emoji:"⚡" },
+  { id:"62", name:"VX USB-C to Lightning",      price:599,  discountPrice:449,  category:"Charging Cable",   description:"MFi certified USB-C to Lightning cable. 20W PD fast charge for iPhone.",               sizes:["One Size"],                colors:["Black","White"],         stock:140,sku:"SMB-CBL-002", bestseller:true,  featured:false, rating:4.6, reviewsCount:512, emoji:"🔋" },
+  { id:"63", name:"VX Retractable 3-in-1",      price:899,  discountPrice:699,  category:"Charging Cable",   description:"3-in-1 retractable cable with USB-C, Lightning and Micro-USB tips. 65W max.",           sizes:["One Size"],                colors:["Black","White"],         stock:88, sku:"SMB-CBL-003", bestseller:true,  featured:true,  rating:4.7, reviewsCount:334, emoji:"🔋" },
+  { id:"64", name:"VX Magnetic Cable",          price:799,  discountPrice:599,  category:"Charging Cable",   description:"360 degree magnetic charging cable with 3 tips: USB-C, Lightning, Micro.",             sizes:["One Size"],                colors:["Black","Silver"],        stock:65, sku:"SMB-CBL-004", bestseller:false, featured:false, rating:4.3, reviewsCount:221, emoji:"🧲" },
+  { id:"65", name:"VX USB-A to USB-C 2m",       price:349,  discountPrice:null, category:"Charging Cable",   description:"Durable 2-metre nylon braided USB-A to USB-C cable. 18W fast charge.",                 sizes:["One Size"],                colors:["Black","White","Grey"],  stock:200,sku:"SMB-CBL-005", bestseller:false, featured:false, rating:4.2, reviewsCount:678, emoji:"🔋" },
+  { id:"66", name:"VX MagSafe Cable",           price:999,  discountPrice:799,  category:"Charging Cable",   description:"MagSafe compatible braided cable for iPhone 12 and above. Snaps on perfectly.",        sizes:["One Size"],                colors:["White","Black"],         stock:55, sku:"SMB-CBL-006", bestseller:false, featured:false, rating:4.5, reviewsCount:143, emoji:"🧲" },
+  { id:"67", name:"VX Micro USB Fast Charge",   price:299,  discountPrice:null, category:"Charging Cable",   description:"Micro USB cable with 12W fast charge support. Backward compatible.",                   sizes:["One Size"],                colors:["Black","White"],         stock:250,sku:"SMB-CBL-007", bestseller:false, featured:false, rating:4.1, reviewsCount:891, emoji:"🔋" },
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -57,11 +106,11 @@ function useLocalStorage(key, initial) {
   return [val, set];
 }
 function StoreProvider({ children }) {
-  const [cart, setCart]         = useLocalStorage("vyrox_cart", []);
-  const [wishlist, setWishlist] = useLocalStorage("vyrox_wishlist", []);
-  const [orders, setOrders]     = useLocalStorage("vyrox_orders", []);
+  const [cart, setCart]         = useLocalStorage("shoemob_cart", []);
+  const [wishlist, setWishlist] = useLocalStorage("shoemob_wishlist", []);
+  const [orders, setOrders]     = useLocalStorage("shoemob_orders", []);
   const [products, setProducts] = useState(MOCK_PRODUCTS);
-  const [adminAuth, setAdminAuth] = useState(() => { try { return !!localStorage.getItem("vyrox_admin"); } catch { return false; } });
+  const [adminAuth, setAdminAuth] = useState(() => { try { return !!localStorage.getItem("shoemob_admin"); } catch { return false; } });
   const addToCart = (product, size, color, qty=1) => setCart(prev => { const key=`${product.id}_${size}_${color}`; const ex=prev.find(i=>`${i.id}_${i.size}_${i.color}`===key); if(ex) return prev.map(i=>`${i.id}_${i.size}_${i.color}`===key?{...i,qty:i.qty+qty}:i); return [...prev,{...product,size,color,qty}]; });
   const removeFromCart = (id,size,color) => setCart(prev=>prev.filter(i=>!(i.id===id&&i.size===size&&i.color===color)));
   const updateQty = (id,size,color,qty) => { if(qty<1) return removeFromCart(id,size,color); setCart(prev=>prev.map(i=>i.id===id&&i.size===size&&i.color===color?{...i,qty}:i)); };
@@ -69,12 +118,12 @@ function StoreProvider({ children }) {
   const toggleWishlist = (id) => setWishlist(prev=>prev.includes(id)?prev.filter(w=>w!==id):[...prev,id]);
   const cartTotal = cart.reduce((s,i)=>s+(i.discountPrice||i.price)*i.qty,0);
   const cartCount = cart.reduce((s,i)=>s+i.qty,0);
-  const adminLogin = (user,pass) => { if(user==="vyrox"&&pass==="#vyrox2026"){localStorage.setItem("vyrox_admin","1");setAdminAuth(true);return true;}return false; };
-  const adminLogout = () => { localStorage.removeItem("vyrox_admin");setAdminAuth(false); };
+  const adminLogin = (user,pass) => { if(user==="shoemob"&&pass==="#shoemob2026"){localStorage.setItem("shoemob_admin","1");setAdminAuth(true);return true;}return false; };
+  const adminLogout = () => { localStorage.removeItem("shoemob_admin");setAdminAuth(false); };
   const addProduct = (p) => setProducts(prev=>[{...p,id:Date.now().toString(),rating:0,reviewsCount:0,createdAt:new Date().toISOString()},...prev]);
   const editProduct = (id,data) => setProducts(prev=>prev.map(p=>p.id===id?{...p,...data}:p));
   const deleteProduct = (id) => setProducts(prev=>prev.filter(p=>p.id!==id));
-  const placeOrder = (details) => { const orderId=`VYX-${Math.floor(1000+Math.random()*9000)}`; const order={orderId,products:cart,total:cartTotal,customer:details,status:"Pending",createdAt:new Date().toISOString()}; setOrders(prev=>[order,...prev]); clearCart(); return order; };
+  const placeOrder = (details) => { const orderId=`SMB-${Math.floor(1000+Math.random()*9000)}`; const order={orderId,products:cart,total:cartTotal,customer:details,status:"Pending",createdAt:new Date().toISOString()}; setOrders(prev=>[order,...prev]); clearCart(); return order; };
   const updateOrderStatus = (orderId,status) => setOrders(prev=>prev.map(o=>o.orderId===orderId?{...o,status}:o));
   return <StoreContext.Provider value={{cart,wishlist,orders,products,adminAuth,cartTotal,cartCount,addToCart,removeFromCart,updateQty,clearCart,toggleWishlist,adminLogin,adminLogout,addProduct,editProduct,deleteProduct,placeOrder,updateOrderStatus}}>{children}</StoreContext.Provider>;
 }
@@ -107,30 +156,146 @@ const gs = {
 
 // ─── NAVBAR ───────────────────────────────────────────────────────────────────
 function Navbar({ page, setPage }) {
-  const { cartCount, wishlist } = useStore();
+  const { cartCount, wishlist, products } = useStore();
+  const [query, setQuery]       = useState("");
+  const [results, setResults]   = useState([]);
+  const [showDrop, setShowDrop] = useState(false);
+  const [focused, setFocused]   = useState(false);
+  const debRef  = useRef(null);
+  const wrapRef = useRef(null);
+
+  // Debounced live search
+  const handleInput = (v) => {
+    setQuery(v);
+    clearTimeout(debRef.current);
+    if (!v.trim()) { setResults([]); setShowDrop(false); return; }
+    debRef.current = setTimeout(() => {
+      const q = v.toLowerCase();
+      const hits = products.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+      ).slice(0, 7);
+      setResults(hits);
+      setShowDrop(true);
+    }, 250);
+  };
+
+  const goProduct = (id) => {
+    setQuery(""); setResults([]); setShowDrop(false);
+    setPage({ name:"product", id });
+  };
+
+  const goShop = () => {
+    setShowDrop(false);
+    setPage("shop");
+  };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setShowDrop(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const discount = (p) => p.discountPrice ? Math.round((1 - p.discountPrice/p.price)*100) : 0;
+
   return (
-    <nav style={{ background:`rgba(247,247,247,0.93)`, backdropFilter:"blur(20px)", borderBottom:`1px solid ${THEME.border}`, position:"sticky", top:0, zIndex:100 }}>
-      <div style={{ maxWidth:1400, margin:"0 auto", padding:"0 28px", display:"flex", alignItems:"center", justifyContent:"space-between", height:66 }}>
-        <button onClick={()=>setPage("home")} style={{ background:"none", border:"none", cursor:"pointer" }}>
-          <span style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.1rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.14em" }}>VYROX</span>
+    <nav style={{ background:`rgba(247,247,247,0.97)`, backdropFilter:"blur(20px)", borderBottom:`1px solid ${THEME.border}`, position:"sticky", top:0, zIndex:200 }}>
+      {/* Main bar */}
+      <div style={{ maxWidth:1400, margin:"0 auto", padding:"0 20px", display:"flex", alignItems:"center", gap:12, height:66 }}>
+
+        {/* Logo */}
+        <button onClick={()=>setPage("home")} style={{ background:"none", border:"none", cursor:"pointer", flexShrink:0 }}>
+          <span style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.14em" }}>SHOEMOB</span>
         </button>
-        <div style={{ display:"flex", gap:2 }}>
+
+        {/* Nav links */}
+        <div style={{ display:"flex", gap:2, flexShrink:0 }}>
           {["home","shop","about"].map(p => (
-            <button key={p} onClick={()=>setPage(p)} style={{ background:page===p?"rgba(0,0,0,0.05)":"none", color:page===p?THEME.accent:THEME.textMuted, border:"none", borderBottom:page===p?`2px solid ${THEME.accent}`:"2px solid transparent", cursor:"pointer", padding:"8px 18px", fontSize:"0.82rem", textTransform:"uppercase", letterSpacing:"0.1em", fontWeight:page===p?700:400, transition:"all 0.2s" }}>
+            <button key={p} onClick={()=>setPage(p)} style={{ background:page===p?"rgba(0,0,0,0.05)":"none", color:page===p?THEME.accent:THEME.textMuted, border:"none", borderBottom:page===p?`2px solid ${THEME.accent}`:"2px solid transparent", cursor:"pointer", padding:"8px 14px", fontSize:"0.78rem", textTransform:"uppercase", letterSpacing:"0.1em", fontWeight:page===p?700:400, transition:"all 0.2s" }}>
               {p}
             </button>
           ))}
         </div>
-        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+
+        {/* ── SEARCH BOX ── */}
+        <div ref={wrapRef} style={{ flex:1, position:"relative", maxWidth:480 }}>
+          <div style={{ display:"flex", alignItems:"center", background:focused?"#fff":THEME.surfaceAlt, border:`1.5px solid ${focused?THEME.accent:THEME.border}`, borderRadius:8, padding:"0 12px", transition:"all 0.2s", boxShadow:focused?"0 2px 16px rgba(0,0,0,0.08)":"none" }}>
+            <span style={{ fontSize:"0.95rem", color:THEME.textDim, marginRight:8, flexShrink:0 }}>🔍</span>
+            <input
+              value={query}
+              onChange={e => handleInput(e.target.value)}
+              onFocus={() => { setFocused(true); if(results.length) setShowDrop(true); }}
+              onBlur={() => setFocused(false)}
+              placeholder="Search products, categories..."
+              style={{ flex:1, border:"none", background:"transparent", outline:"none", fontSize:"0.86rem", color:THEME.text, padding:"10px 0", fontFamily:"'DM Sans',sans-serif" }}
+              onKeyDown={e => { if(e.key==="Escape"){ setShowDrop(false); setQuery(""); setResults([]); } if(e.key==="Enter" && query.trim()){ goShop(); } }}
+            />
+            {query && (
+              <button onClick={()=>{ setQuery(""); setResults([]); setShowDrop(false); }} style={{ background:"none", border:"none", cursor:"pointer", color:THEME.textDim, fontSize:"1rem", padding:"0 0 0 6px", lineHeight:1 }}>✕</button>
+            )}
+          </div>
+
+          {/* DROPDOWN RESULTS */}
+          {showDrop && (
+            <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"#fff", border:`1px solid ${THEME.border}`, borderRadius:10, boxShadow:"0 8px 40px rgba(0,0,0,0.13)", zIndex:300, overflow:"hidden" }}>
+              {results.length === 0 ? (
+                <div style={{ padding:"18px 16px", color:THEME.textMuted, fontSize:"0.84rem", textAlign:"center" }}>
+                  No results for "<strong>{query}</strong>"
+                </div>
+              ) : (
+                <>
+                  <div style={{ padding:"8px 14px 6px", fontSize:"0.64rem", color:THEME.textDim, textTransform:"uppercase", letterSpacing:"0.1em", borderBottom:`1px solid ${THEME.border}` }}>
+                    {results.length} result{results.length!==1?"s":""} for "{query}"
+                  </div>
+                  {results.map((p, i) => (
+                    <div key={p.id} onClick={()=>goProduct(p.id)}
+                      style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", cursor:"pointer", borderBottom: i < results.length-1 ? `1px solid ${THEME.border}` : "none", transition:"background 0.15s" }}
+                      onMouseEnter={e=>e.currentTarget.style.background="#F7F7F7"}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      {/* Emoji thumb */}
+                      <div style={{ width:44, height:44, background:`linear-gradient(145deg,#F0F0F0,#E4E4E4)`, borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.5rem", flexShrink:0 }}>{p.emoji}</div>
+                      {/* Info */}
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontWeight:600, fontSize:"0.86rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                          {/* Highlight matching text */}
+                          {p.name}
+                        </div>
+                        <div style={{ fontSize:"0.7rem", color:THEME.textMuted, marginTop:2 }}>{p.category}</div>
+                      </div>
+                      {/* Price */}
+                      <div style={{ textAlign:"right", flexShrink:0 }}>
+                        <div style={{ fontWeight:800, fontSize:"0.9rem" }}>{fmt(p.discountPrice||p.price)}</div>
+                        {p.discountPrice && (
+                          <div style={{ fontSize:"0.65rem", color:THEME.error, fontWeight:700 }}>-{discount(p)}% OFF</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {/* Footer: see all */}
+                  <div onClick={goShop} style={{ padding:"10px 14px", textAlign:"center", fontSize:"0.76rem", color:THEME.accent, fontWeight:700, cursor:"pointer", borderTop:`1px solid ${THEME.border}`, background:THEME.surface, transition:"background 0.15s" }}
+                    onMouseEnter={e=>e.currentTarget.style.background=THEME.surfaceAlt}
+                    onMouseLeave={e=>e.currentTarget.style.background=THEME.surface}>
+                    See all results in Shop →
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Right icons */}
+        <div style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
           <button onClick={()=>setPage("wishlist")} style={{ background:"none", border:"none", cursor:"pointer", color:wishlist.length?THEME.error:THEME.textMuted, fontSize:"1.3rem", padding:"6px", position:"relative", transition:"all 0.2s" }}>
             {wishlist.length?"♥":"♡"}
             {wishlist.length>0 && <span style={{ position:"absolute", top:0, right:0, background:THEME.error, color:"#fff", fontSize:"0.55rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>{wishlist.length}</span>}
           </button>
-          <button onClick={()=>setPage("cart")} style={{ ...gs.btnOutline, padding:"8px 16px", display:"flex", alignItems:"center", gap:7, fontSize:"0.78rem" }}>
+          <button onClick={()=>setPage("cart")} style={{ ...gs.btnOutline, padding:"8px 14px", display:"flex", alignItems:"center", gap:7, fontSize:"0.78rem" }}>
             🛒 Cart
             {cartCount>0 && <span style={{ background:THEME.gradientAccent, color:"#fff", borderRadius:"100px", width:20, height:20, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.62rem", fontWeight:700 }}>{cartCount}</span>}
           </button>
-          <button onClick={()=>setPage("admin")} style={{ ...gs.btnGhost, padding:"8px 14px", fontSize:"0.72rem", color:THEME.gold, borderColor:`rgba(0,0,0,0.33)` }}>⚙ Admin</button>
+          <button onClick={()=>setPage("admin")} style={{ ...gs.btnGhost, padding:"7px 12px", fontSize:"0.72rem", color:THEME.gold, borderColor:`rgba(0,0,0,0.2)` }}>⚙ Admin</button>
         </div>
       </div>
     </nav>
@@ -178,7 +343,7 @@ function HomePage({ setPage }) {
           </div>
         </div>
         <div style={{ position:"absolute", right:32, top:"50%", transform:"translateY(-50%)", opacity:0.07, fontFamily:"'Bebas Neue',sans-serif", fontSize:"0.9rem", letterSpacing:"0.25em", writingMode:"vertical-rl" }}>
-          PREMIUM • LIFESTYLE • FASHION • VYROX • 2026 •
+          PREMIUM • LIFESTYLE • FASHION • SHOEMOB • 2026 •
         </div>
       </div>
 
@@ -196,20 +361,20 @@ function HomePage({ setPage }) {
 
       <div style={{ maxWidth:1400, margin:"0 auto", padding:"68px 28px" }}>
         <SectionHeader title="Featured Drops" subtitle="Handpicked for the season" onSeeAll={()=>setPage("shop")} />
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))", gap:20 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:20 }}>
           {featured.map(p=><ProductCard key={p.id} product={p} setPage={setPage} />)}
         </div>
 
         <div style={{ marginTop:76 }}>
           <SectionHeader title="Bestsellers" subtitle="What everyone's wearing" onSeeAll={()=>setPage("shop")} />
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))", gap:20 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:20 }}>
             {bestsellers.map(p=><ProductCard key={p.id} product={p} setPage={setPage} />)}
           </div>
         </div>
 
         <div style={{ marginTop:76 }}>
           <SectionHeader title="Shop by Category" subtitle="Explore our full range" />
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(152px,1fr))", gap:12 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(120px,1fr))", gap:12 }}>
             {CATEGORIES.filter(c=>c!=="All").slice(0,12).map(cat=>(
               <button key={cat} onClick={()=>setPage("shop")}
                 style={{ ...gs.card, padding:"22px 12px", cursor:"pointer", textAlign:"center", transition:"all 0.25s", borderColor:THEME.border }}
@@ -380,7 +545,7 @@ function ShopPage({ setPage }) {
             <button onClick={clearAll} style={gs.btn}>Clear Filters</button>
           </div>
         ) : (
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(228px,1fr))", gap:20 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:20 }}>
             {filtered.map(p=><ProductCard key={p.id} product={p} setPage={setPage} />)}
           </div>
         )}
@@ -465,6 +630,36 @@ function ProductDetail({ productId, setPage }) {
           </div>
         </div>
       </div>
+
+      {/* RELATED PRODUCTS */}
+      <div style={{ marginTop:56 }}>
+        <div style={{ borderTop:`2px solid ${THEME.border}`, paddingTop:36, marginBottom:24 }}>
+          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.6rem", letterSpacing:"0.08em", marginBottom:4 }}>YOU MAY ALSO LIKE</div>
+          <div style={{ color:THEME.textMuted, fontSize:"0.8rem" }}>More from {p.category}</div>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:16 }}>
+          {products.filter(x=>x.id!==p.id && x.category===p.category).slice(0,4).map(rel=>(
+            <div key={rel.id} style={{ ...gs.card, display:"flex", gap:14, padding:14, cursor:"pointer", transition:"all 0.2s", alignItems:"center" }}
+              onClick={()=>setPage({name:"product",id:rel.id})}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=THEME.borderLight;e.currentTarget.style.transform="translateY(-2px)";}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=THEME.border;e.currentTarget.style.transform="none";}}>
+              <div style={{ background:`linear-gradient(145deg,#F0F0F0 0%,#E4E4E4 100%)`, width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"2.2rem", borderRadius:8, flexShrink:0 }}>{rel.emoji}</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:"0.65rem", color:THEME.accent, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:3 }}>{rel.category}</div>
+                <div style={{ fontWeight:600, fontSize:"0.82rem", lineHeight:1.3, marginBottom:5, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{rel.name}</div>
+                <Stars rating={rel.rating} />
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:4 }}>
+                  <span style={{ fontWeight:800, fontSize:"0.9rem" }}>{fmt(rel.discountPrice||rel.price)}</span>
+                  {rel.discountPrice && <span style={{ fontSize:"0.72rem", color:THEME.textDim, textDecoration:"line-through" }}>{fmt(rel.price)}</span>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {products.filter(x=>x.id!==p.id && x.category===p.category).length===0 && (
+          <div style={{ color:THEME.textMuted, fontSize:"0.85rem", padding:"20px 0" }}>No related products found.</div>
+        )}
+      </div>
     </div>
   );
 }
@@ -484,7 +679,7 @@ function WishlistPage({ setPage }) {
           <button onClick={()=>setPage("shop")} style={gs.btn}>Browse Products</button>
         </div>
       ) : (
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))", gap:18 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:18 }}>
           {items.map(p=>(
             <div key={p.id} style={gs.card}>
               <div style={{ background:`linear-gradient(145deg,#F0F0F0 0%,#E4E4E4 100%)`, height:182, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"4rem", cursor:"pointer", borderRadius:"10px 10px 0 0" }} onClick={()=>setPage({name:"product",id:p.id})}>{p.emoji}</div>
@@ -581,7 +776,7 @@ function CheckoutPage({ setPage }) {
     const order=placeOrder(form);
     const items=cart.map(i=>`• ${i.name} | ${i.size} | ${i.color} | Qty: ${i.qty}`).join("\n");
     const total=cartTotal>=2999?cartTotal:cartTotal+99;
-    const msg=`🛒 *New Order - VYROX*\nOrder ID: *${order.orderId}*\n\n*Products:*\n${items}\n\n*Total: ₹${total.toLocaleString("en-IN")}*\n\n*Customer Details:*\nName: ${form.name}\nPhone: ${form.phone}\nAddress: ${form.address}, ${form.city}, ${form.state} - ${form.zip}`;
+    const msg=`🛒 *New Order - SHOEMOB*\nOrder ID: *${order.orderId}*\n\n*Products:*\n${items}\n\n*Total: ₹${total.toLocaleString("en-IN")}*\n\n*Customer Details:*\nName: ${form.name}\nPhone: ${form.phone}\nAddress: ${form.address}, ${form.city}, ${form.state} - ${form.zip}`;
     window.open(`https://wa.me/918320471216?text=${encodeURIComponent(msg)}`,"_blank");
     setPage({name:"orderSuccess",orderId:order.orderId});
   };
@@ -652,7 +847,7 @@ function AdminPage({ setPage }) {
     <div style={{ maxWidth:420, margin:"80px auto", padding:24 }}>
       <div style={{ ...gs.card, ...gs.glow, padding:40 }}>
         <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"2.2rem", letterSpacing:"0.1em", marginBottom:4, background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>ADMIN LOGIN</div>
-        <div style={{ color:THEME.textMuted, fontSize:"0.78rem", marginBottom:30 }}>VYROX Control Panel</div>
+        <div style={{ color:THEME.textMuted, fontSize:"0.78rem", marginBottom:30 }}>SHOEMOB Control Panel</div>
         {[["user","Username","text"],["pass","Password","password"]].map(([field,label,type])=>(
           <div key={field} style={{ marginBottom:16 }}>
             <label style={{ fontSize:"0.67rem", textTransform:"uppercase", letterSpacing:"0.1em", color:THEME.textMuted, display:"block", marginBottom:6 }}>{label}</label>
@@ -661,7 +856,7 @@ function AdminPage({ setPage }) {
         ))}
         {le && <div style={{ color:THEME.error, fontSize:"0.78rem", marginBottom:14 }}>{le}</div>}
         <button onClick={()=>{if(!adminLogin(lf.user,lf.pass))setLE("Invalid credentials");else setLE("");}} style={{ ...gs.btn, width:"100%", padding:"13px" }}>LOGIN →</button>
-        <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:20, textAlign:"center" }}>vyrox / #vyrox2026</div>
+        <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:20, textAlign:"center" }}>shoemob / #shoemob2026</div>
       </div>
     </div>
   );
@@ -674,7 +869,7 @@ function AdminPage({ setPage }) {
       <div style={{ width:212, background:THEME.surface, borderRight:`1px solid ${THEME.border}`, padding:"24px 0", flexShrink:0 }}>
         <div style={{ padding:"0 22px 22px", borderBottom:`1px solid ${THEME.border}`, marginBottom:16 }}>
           <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.12em" }}>ADMIN PANEL</div>
-          <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:2 }}>VYROX Control</div>
+          <div style={{ fontSize:"0.65rem", color:THEME.textDim, marginTop:2 }}>SHOEMOB Control</div>
         </div>
         {tabs.map(([t,ic,l])=>(
           <button key={t} onClick={()=>setTab(t)} style={{ display:"block", width:"100%", background:tab===t?"rgba(0,0,0,0.05)":"none", color:tab===t?THEME.accent:THEME.textMuted, border:"none", borderLeft:`3px solid ${tab===t?THEME.accent:"transparent"}`, padding:"13px 22px", cursor:"pointer", textAlign:"left", fontSize:"0.82rem", transition:"all 0.15s" }}>
@@ -867,13 +1062,13 @@ function AboutPage({ setPage }) {
   return (
     <div style={{ maxWidth:920, margin:"0 auto", padding:"68px 28px" }}>
       <div style={{ textAlign:"center", marginBottom:68 }}>
-        <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"5.5rem", letterSpacing:"0.12em", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", filter:`drop-shadow(0 0 20px rgba(0,0,0,0.15))` }}>VYROX</div>
+        <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"5.5rem", letterSpacing:"0.12em", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", filter:`drop-shadow(0 0 20px rgba(0,0,0,0.15))` }}>SHOEMOB</div>
         <div style={{ color:THEME.textMuted, fontSize:"1rem", maxWidth:520, margin:"18px auto 0", lineHeight:1.85 }}>
           Premium fashion & lifestyle brand. We craft clothes for those who move with intention and live without apology.
         </div>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:20, marginBottom:68 }}>
-        {[["Our Mission","📌","To deliver exceptional quality that punches above its price — premium materials, precise cuts, uncompromising standards."],["Our Aesthetic","🎨","Dark. Deliberate. Electric. VYROX is for people who understand that style is a language spoken in silence."],["Our Promise","🤝","Every stitch considered. Every product tested. Free returns within 7 days. Always."]].map(([t,ic,d])=>(
+        {[["Our Mission","📌","To deliver exceptional quality that punches above its price — premium materials, precise cuts, uncompromising standards."],["Our Aesthetic","🎨","Dark. Deliberate. Electric. SHOEMOB is for people who understand that style is a language spoken in silence."],["Our Promise","🤝","Every stitch considered. Every product tested. Free returns within 7 days. Always."]].map(([t,ic,d])=>(
           <div key={t} style={{ ...gs.card, padding:30, borderTop:`3px solid ${THEME.accentBold}` }}>
             <div style={{ fontSize:"1.9rem", marginBottom:14 }}>{ic}</div>
             <div style={{ background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.1rem", letterSpacing:"0.1em", marginBottom:12 }}>{t.toUpperCase()}</div>
@@ -932,13 +1127,13 @@ export default function App() {
         <footer style={{ borderTop:`1px solid ${THEME.border}`, padding:"38px 28px", marginTop:60, background:THEME.surface }}>
           <div style={{ maxWidth:1400, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:16 }}>
             <div>
-              <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.9rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.14em" }}>VYROX</div>
+              <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:"1.9rem", background:THEME.gradientAccent, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", letterSpacing:"0.14em" }}>SHOEMOB</div>
               <div style={{ fontSize:"0.67rem", color:THEME.textDim, letterSpacing:"0.1em", marginTop:2 }}>PREMIUM FASHION & LIFESTYLE</div>
             </div>
             <div style={{ display:"flex", gap:24 }}>
               {["home","shop","about"].map(p=><button key={p} onClick={()=>setPage(p)} style={{ background:"none", border:"none", color:THEME.textDim, cursor:"pointer", fontSize:"0.72rem", textTransform:"uppercase", letterSpacing:"0.1em" }}>{p}</button>)}
             </div>
-            <div style={{ fontSize:"0.67rem", color:THEME.textDim }}>© 2026 VYROX. ALL RIGHTS RESERVED.</div>
+            <div style={{ fontSize:"0.67rem", color:THEME.textDim }}>© 2026 SHOEMOB. ALL RIGHTS RESERVED.</div>
           </div>
         </footer>
       </div>
